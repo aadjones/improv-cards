@@ -53,6 +53,7 @@
     "typescript": "~5.8.3"
   },
   "private": true,
+  "license": "UNLICENSED",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",

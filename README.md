@@ -166,4 +166,4 @@ When adding new improvisation techniques:
 
 ## License
 
-This project maintains the same license as the original web application.
+All Rights Reserved. See [LICENSE](LICENSE) file for details.
