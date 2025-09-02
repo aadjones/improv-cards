@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card as CardType, SUITS } from '../constants/cards';
 import { getCardWidth, getFontSize, isTablet } from '../utils/responsive';
 
@@ -32,18 +27,12 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
   ];
 
   return (
-    <TouchableOpacity 
-      style={containerStyle}
-      onPress={onPress}
-      activeOpacity={0.8}
-    >
+    <TouchableOpacity style={containerStyle} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.header}>
         <Text style={styles.emoji}>{suitEmoji}</Text>
         {card.level && (
           <View style={[styles.levelBadge, { backgroundColor: 'rgba(255,255,255,0.8)' }]}>
-            <Text style={[styles.levelText, { color: suitInfo.textColor }]}>
-              {card.level}
-            </Text>
+            <Text style={[styles.levelText, { color: suitInfo.textColor }]}>{card.level}</Text>
           </View>
         )}
       </View>
@@ -52,8 +41,8 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
         <Text style={[styles.title, { color: suitInfo.textColor }]} numberOfLines={2}>
           {card.title}
         </Text>
-        <Text 
-          style={[styles.description, { color: suitInfo.textColor }]} 
+        <Text
+          style={[styles.description, { color: suitInfo.textColor }]}
           numberOfLines={isGridCard ? 4 : 5}
         >
           {card.description}
@@ -61,9 +50,7 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
       </View>
 
       <View style={styles.footer}>
-        <Text style={[styles.suitName, { color: suitInfo.textColor }]}>
-          {suitName}
-        </Text>
+        <Text style={[styles.suitName, { color: suitInfo.textColor }]}>{suitName}</Text>
       </View>
     </TouchableOpacity>
   );

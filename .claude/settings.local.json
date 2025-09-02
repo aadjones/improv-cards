@@ -3,7 +3,14 @@
     "allow": [
       "Bash(npm install:*)",
       "Bash(npm start)",
-      "Bash(npx expo run:android:*)"
+      "Bash(npx expo run:android:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm test)",
+      "WebSearch",
+      "Bash(npx husky init:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Modal,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import { Card as CardType, SUITS } from '../constants/cards';
 
 interface CardDetailModalProps {
@@ -23,12 +16,7 @@ export function CardDetailModal({ card, visible, onClose, onPracticeThis }: Card
   const suitEmoji = card.suit.split(' ')[0];
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -48,14 +36,10 @@ export function CardDetailModal({ card, visible, onClose, onPracticeThis }: Card
             </View>
 
             {/* Suit */}
-            <Text style={[styles.suit, { color: suitInfo.textColor }]}>
-              {card.suit}
-            </Text>
+            <Text style={[styles.suit, { color: suitInfo.textColor }]}>{card.suit}</Text>
 
             {/* Description */}
-            <Text style={styles.description}>
-              {card.description}
-            </Text>
+            <Text style={styles.description}>{card.description}</Text>
 
             {/* Future content placeholder */}
             <View style={styles.futureContent}>
@@ -67,10 +51,7 @@ export function CardDetailModal({ card, visible, onClose, onPracticeThis }: Card
 
           {/* Actions */}
           <View style={styles.actions}>
-            <TouchableOpacity
-              style={[styles.button, styles.closeButton]}
-              onPress={onClose}
-            >
+            <TouchableOpacity style={[styles.button, styles.closeButton]} onPress={onClose}>
               <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
             {onPracticeThis && (

@@ -69,7 +69,7 @@ export default function App() {
               ),
             }}
           >
-            {(props) => <DrawScreen {...props} onCardPress={handleCardPress} />}
+            {props => <DrawScreen {...props} onCardPress={handleCardPress} />}
           </Tab.Screen>
           <Tab.Screen
             name="Browse"
@@ -81,7 +81,7 @@ export default function App() {
               ),
             }}
           >
-            {(props) => <BrowseScreen {...props} onCardPress={handleCardPress} />}
+            {props => <BrowseScreen {...props} onCardPress={handleCardPress} />}
           </Tab.Screen>
         </Tab.Navigator>
 

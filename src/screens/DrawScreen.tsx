@@ -10,9 +10,9 @@ import {
   Switch,
 } from 'react-native';
 import { Card, EmptyGridSlot } from '../components/Card';
-import { 
-  Card as CardType, 
-  Settings, 
+import {
+  Card as CardType,
+  Settings,
   DEFAULT_SETTINGS,
   TECHNICAL_SUITS,
   LEVELS,
@@ -46,7 +46,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
     try {
       const newCards = drawCards(settings);
       setDrawnCards(newCards);
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'No technical cards available with current settings.');
     }
   };
@@ -56,7 +56,6 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
   };
 
   const moodCard = drawnCards.find(card => card.suit === MOOD_SUIT);
-  const technicalDrawnCards = drawnCards.filter(card => card.suit !== MOOD_SUIT);
 
   const getCardForSuit = (suit: string) => {
     return drawnCards.find(card => card.suit === suit);
@@ -77,7 +76,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
           <TextInput
             style={styles.numberInput}
             value={settings.technicalCount.toString()}
-            onChangeText={(text) => {
+            onChangeText={text => {
               const num = parseInt(text) || 1;
               updateSettings({ ...settings, technicalCount: Math.max(1, Math.min(4, num)) });
             }}
@@ -90,7 +89,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
           <Text style={styles.controlLabel}>Include mood card</Text>
           <Switch
             value={settings.includeMood}
-            onValueChange={(value) => updateSettings({ ...settings, includeMood: value })}
+            onValueChange={value => updateSettings({ ...settings, includeMood: value })}
           />
         </View>
 
@@ -105,13 +104,8 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
       </TouchableOpacity>
 
       {/* Advanced Filters Toggle */}
-      <TouchableOpacity 
-        style={styles.filtersToggle} 
-        onPress={() => setShowFilters(!showFilters)}
-      >
-        <Text style={styles.filtersToggleText}>
-          {showFilters ? '▼' : '▶'} Advanced Filters
-        </Text>
+      <TouchableOpacity style={styles.filtersToggle} onPress={() => setShowFilters(!showFilters)}>
+        <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Advanced Filters</Text>
       </TouchableOpacity>
 
       {/* Advanced Filters */}
@@ -123,7 +117,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
               <TouchableOpacity
                 style={[
                   styles.checkbox,
-                  settings.allowedSuits.includes(suit) && styles.checkboxChecked
+                  settings.allowedSuits.includes(suit) && styles.checkboxChecked,
                 ]}
                 onPress={() => {
                   const newSuits = settings.allowedSuits.includes(suit)
@@ -132,9 +126,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
                   updateSettings({ ...settings, allowedSuits: newSuits });
                 }}
               >
-                {settings.allowedSuits.includes(suit) && (
-                  <Text style={styles.checkmark}>✓</Text>
-                )}
+                {settings.allowedSuits.includes(suit) && <Text style={styles.checkmark}>✓</Text>}
               </TouchableOpacity>
               <Text style={styles.checkboxLabel}>{suit}</Text>
             </View>
@@ -146,7 +138,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
               <TouchableOpacity
                 style={[
                   styles.checkbox,
-                  settings.allowedLevels.includes(level) && styles.checkboxChecked
+                  settings.allowedLevels.includes(level) && styles.checkboxChecked,
                 ]}
                 onPress={() => {
                   const newLevels = settings.allowedLevels.includes(level)
@@ -155,9 +147,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
                   updateSettings({ ...settings, allowedLevels: newLevels });
                 }}
               >
-                {settings.allowedLevels.includes(level) && (
-                  <Text style={styles.checkmark}>✓</Text>
-                )}
+                {settings.allowedLevels.includes(level) && <Text style={styles.checkmark}>✓</Text>}
               </TouchableOpacity>
               <Text style={styles.checkboxLabel}>{level}</Text>
             </View>
@@ -169,7 +159,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
       {drawnCards.length > 0 && (
         <View style={styles.drawnCardsContainer}>
           <Text style={styles.sessionTitle}>Your Practice Session</Text>
-          
+
           {/* Clear Button */}
           <TouchableOpacity style={styles.clearButton} onPress={clearCards}>
             <Text style={styles.clearButtonText}>Clear Cards</Text>
@@ -181,9 +171,8 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
               <Text style={styles.moodBannerEmoji}>🎭</Text>
               <View style={styles.moodBannerContent}>
                 <Text style={styles.moodBannerTitle}>
-                  Practice with a <Text style={styles.moodBannerMood}>
-                    {moodCard.title.toUpperCase()}
-                  </Text> mood
+                  Practice with a{' '}
+                  <Text style={styles.moodBannerMood}>{moodCard.title.toUpperCase()}</Text> mood
                 </Text>
                 <Text style={styles.moodBannerDescription}>{moodCard.description}</Text>
               </View>
@@ -193,44 +182,44 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
           {/* Technical Cards Grid */}
           <View style={styles.gridContainer}>
             {/* Form Slot */}
-            {getCardForSuit("🏗️ Form") ? (
-              <Card 
-                card={getCardForSuit("🏗️ Form")!} 
+            {getCardForSuit('🏗️ Form') ? (
+              <Card
+                card={getCardForSuit('🏗️ Form')!}
                 isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit("🏗️ Form")!)}
+                onPress={() => onCardPress(getCardForSuit('🏗️ Form')!)}
               />
             ) : (
               <EmptyGridSlot suitEmoji="🏗️" suitName="Form" />
             )}
 
             {/* Time Slot */}
-            {getCardForSuit("⏳ Time") ? (
-              <Card 
-                card={getCardForSuit("⏳ Time")!} 
+            {getCardForSuit('⏳ Time') ? (
+              <Card
+                card={getCardForSuit('⏳ Time')!}
                 isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit("⏳ Time")!)}
+                onPress={() => onCardPress(getCardForSuit('⏳ Time')!)}
               />
             ) : (
               <EmptyGridSlot suitEmoji="⏳" suitName="Time" />
             )}
 
             {/* Pitch Slot */}
-            {getCardForSuit("〰️ Pitch") ? (
-              <Card 
-                card={getCardForSuit("〰️ Pitch")!} 
+            {getCardForSuit('〰️ Pitch') ? (
+              <Card
+                card={getCardForSuit('〰️ Pitch')!}
                 isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit("〰️ Pitch")!)}
+                onPress={() => onCardPress(getCardForSuit('〰️ Pitch')!)}
               />
             ) : (
               <EmptyGridSlot suitEmoji="〰️" suitName="Pitch" />
             )}
 
             {/* Position Slot */}
-            {getCardForSuit("🎹 Position") ? (
-              <Card 
-                card={getCardForSuit("🎹 Position")!} 
+            {getCardForSuit('🎹 Position') ? (
+              <Card
+                card={getCardForSuit('🎹 Position')!}
                 isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit("🎹 Position")!)}
+                onPress={() => onCardPress(getCardForSuit('🎹 Position')!)}
               />
             ) : (
               <EmptyGridSlot suitEmoji="🎹" suitName="Position" />
@@ -245,10 +234,9 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
           <Text style={styles.gettingStartedEmoji}>🎹</Text>
           <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
           <Text style={styles.gettingStartedText}>
-            {settings.includeMood 
+            {settings.includeMood
               ? `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''} + 1 mood`
-              : `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''}`
-            }
+              : `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''}`}
           </Text>
         </View>
       )}

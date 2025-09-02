@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  SectionList,
-  Dimensions,
-} from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { Card } from '../components/Card';
 import { Card as CardType, CARDS_DATA, SUITS } from '../constants/cards';
 import { groupCardsBySuit } from '../utils/cardUtils';
@@ -17,7 +10,7 @@ interface BrowseScreenProps {
 
 export function BrowseScreen({ onCardPress }: BrowseScreenProps) {
   const groupedCards = groupCardsBySuit(CARDS_DATA);
-  
+
   const renderCard = ({ item }: { item: CardType }) => (
     <Card card={item} onPress={() => onCardPress(item)} />
   );
@@ -36,22 +29,18 @@ export function BrowseScreen({ onCardPress }: BrowseScreenProps) {
         keyExtractor={([suit]) => suit}
         renderItem={({ item: [suit, suitInfo] }) => {
           const cards = groupedCards[suit] || [];
-          const title = suit === "🎭 Mood" ? "🎭 Moods" : suit;
-          
+          const title = suit === '🎭 Mood' ? '🎭 Moods' : suit;
+
           return (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: suitInfo.textColor }]}>
-                  {title}
-                </Text>
-                <Text style={styles.cardCount}>
-                  ({cards.length})
-                </Text>
+                <Text style={[styles.sectionTitle, { color: suitInfo.textColor }]}>{title}</Text>
+                <Text style={styles.cardCount}>({cards.length})</Text>
               </View>
               <FlatList
                 data={cards}
                 renderItem={renderCard}
-                keyExtractor={(card) => card.id}
+                keyExtractor={card => card.id}
                 numColumns={2}
                 columnWrapperStyle={styles.row}
                 ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
