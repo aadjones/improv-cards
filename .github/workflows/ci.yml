@@ -55,11 +55,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup Expo CLI
-        run: npm install -g @expo/cli
+      - name: Setup Expo and EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
 
       - name: Check Expo project structure
-        run: npx expo doctor
-
-      - name: Verify Expo build setup (dry run)
-        run: npx expo prebuild --dry-run --platform all
+        run: npx expo-doctor@latest
