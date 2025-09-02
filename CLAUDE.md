@@ -76,6 +76,14 @@ Based on evidence, either:
 - `npm test` - Run test suite
 - `npm run test:watch` - Run tests in watch mode
 
+### Code Quality
+
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Auto-fix ESLint issues
+- `npm run prettier` - Check Prettier formatting
+- `npm run prettier:fix` - Auto-fix Prettier formatting
+- `npm run typecheck` - Run TypeScript type checking
+
 ## Architecture
 
 ### Core Structure
@@ -146,3 +154,10 @@ Based on evidence, either:
 - Mocked AsyncStorage and React Navigation
 - Test files: `tests/**/*.test.ts` (mirrors src structure) or `**/*.test.ts` (co-located)
 - Focus on utility functions and core logic (following user's testing philosophy)
+
+### Code Quality & CI/CD
+
+- **Husky** pre-commit hooks run type checking, linting, and formatting
+- **GitHub Actions** CI runs on push/PR with Node.js 18.x and 20.x
+- Pipeline includes: TypeScript checking, ESLint, Prettier, Jest tests, and Expo compatibility checks
+- **lint-staged** processes only staged files for performance
