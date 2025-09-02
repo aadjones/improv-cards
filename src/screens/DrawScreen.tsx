@@ -9,6 +9,7 @@ import {
   TextInput,
   Switch,
 } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Card, EmptyGridSlot } from '../components/Card';
 import {
   Card as CardType,
@@ -20,12 +21,14 @@ import {
 } from '../constants/cards';
 import { drawCards, getTechnicalCards, getMoodCards } from '../utils/cardUtils';
 import { loadSettings, saveSettings } from '../utils/storage';
+import { RootStackParamList } from '../types/navigation';
 
 interface DrawScreenProps {
+  navigation: NativeStackNavigationProp<RootStackParamList>;
   onCardPress: (card: CardType) => void;
 }
 
-export function DrawScreen({ onCardPress }: DrawScreenProps) {
+export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
   const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [showFilters, setShowFilters] = useState(false);
@@ -46,6 +49,7 @@ export function DrawScreen({ onCardPress }: DrawScreenProps) {
     try {
       const newCards = drawCards(settings);
       setDrawnCards(newCards);
+      navigation.navigate('Practice', { drawnCards: newCards });
     } catch {
       Alert.alert('Error', 'No technical cards available with current settings.');
     }
