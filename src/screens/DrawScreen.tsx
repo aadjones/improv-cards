@@ -1,14 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  Alert,
-  TextInput,
-  Switch,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Switch } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Card, EmptyGridSlot } from '../components/Card';
 import {
@@ -77,16 +68,51 @@ export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
       <View style={styles.controlsContainer}>
         <View style={styles.controlRow}>
           <Text style={styles.controlLabel}>Number of constraint cards:</Text>
-          <TextInput
-            style={styles.numberInput}
-            value={settings.technicalCount.toString()}
-            onChangeText={text => {
-              const num = parseInt(text) || 1;
-              updateSettings({ ...settings, technicalCount: Math.max(1, Math.min(4, num)) });
-            }}
-            keyboardType="numeric"
-            maxLength={1}
-          />
+          <View style={styles.stepper}>
+            <TouchableOpacity
+              style={styles.stepperButton}
+              onPress={() =>
+                updateSettings({
+                  ...settings,
+                  technicalCount: Math.max(1, settings.technicalCount - 1),
+                })
+              }
+              disabled={settings.technicalCount <= 1}
+            >
+              <Text
+                style={[
+                  styles.stepperButtonText,
+                  settings.technicalCount <= 1 && styles.stepperButtonDisabled,
+                ]}
+              >
+                −
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.stepperValue}>
+              <Text style={styles.stepperValueText}>{settings.technicalCount}</Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.stepperButton}
+              onPress={() =>
+                updateSettings({
+                  ...settings,
+                  technicalCount: Math.min(4, settings.technicalCount + 1),
+                })
+              }
+              disabled={settings.technicalCount >= 4}
+            >
+              <Text
+                style={[
+                  styles.stepperButtonText,
+                  settings.technicalCount >= 4 && styles.stepperButtonDisabled,
+                ]}
+              >
+                +
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.controlRow}>
@@ -289,15 +315,44 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#374151',
   },
-  numberInput: {
-    borderWidth: 1,
-    borderColor: '#d1d5db',
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4f6',
     borderRadius: 8,
-    padding: 8,
-    width: 60,
-    textAlign: 'center',
-    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  stepperButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minWidth: 44,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  stepperButtonText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#2563eb',
+  },
+  stepperButtonDisabled: {
+    color: '#d1d5db',
+  },
+  stepperValue: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
     backgroundColor: '#ffffff',
+    minWidth: 40,
+    alignItems: 'center',
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  stepperValueText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1f2937',
   },
   availableText: {
     fontSize: 12,

@@ -15,7 +15,8 @@
       "Bash(npm run prettier:*)",
       "Bash(npx expo-doctor:*)",
       "Bash(find:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(npm run format:*)"
     ],
     "deny": [],
     "ask": []
