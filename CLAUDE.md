@@ -80,8 +80,8 @@ Based on evidence, either:
 
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run prettier` - Check Prettier formatting
-- `npm run prettier:fix` - Auto-fix Prettier formatting
+- `npm run format:check` - Check Prettier formatting
+- `npm run format` - Auto-fix Prettier formatting
 - `npm run typecheck` - Run TypeScript type checking
 
 ## Architecture
