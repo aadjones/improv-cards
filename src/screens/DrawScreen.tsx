@@ -1,16 +1,18 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import React, { useState, useMemo } from 'react';
 import {
-  Card as CardType,
-  Settings,
-  DEFAULT_SETTINGS,
-  TECHNICAL_SUITS,
-  LEVELS,
-} from '../constants/cards';
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  SafeAreaView,
+} from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Card as CardType, TECHNICAL_SUITS, LEVELS } from '../constants/cards';
 import { drawCards, getTechnicalCards, getMoodCards } from '../utils/cardUtils';
-import { loadSettings, saveSettings } from '../utils/storage';
 import { RootStackParamList } from '../types/navigation';
+import { useSettings } from '../contexts/SettingsContext';
 
 interface DrawScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList>;
@@ -18,20 +20,18 @@ interface DrawScreenProps {
 }
 
 export function DrawScreen({ navigation }: DrawScreenProps) {
-  const [settings, setSettings] = useState<Settings>({ ...DEFAULT_SETTINGS, technicalCount: 1 });
-  const [showFilters, setShowFilters] = useState(true);
-
-  useEffect(() => {
-    loadSettings().then(setSettings);
-  }, []);
-
-  const updateSettings = async (newSettings: Settings) => {
-    setSettings(newSettings);
-    await saveSettings(newSettings);
-  };
-
+  const { settings, updateSettings, isLoading } = useSettings();
+  const [showFilters, setShowFilters] = useState(false);
   const technicalCards = useMemo(() => getTechnicalCards(settings), [settings]);
   const moodCards = useMemo(() => getMoodCards(), []);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
 
   const handleDrawCards = () => {
     try {
@@ -43,89 +43,93 @@ export function DrawScreen({ navigation }: DrawScreenProps) {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Practice Setup</Text>
-        <Text style={styles.subtitle}>Creative constraints to inspire your practice</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Practice Setup</Text>
+          <Text style={styles.subtitle}>Creative constraints to inspire your practice</Text>
+        </View>
 
-      {/* Card Count Info */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.availableText}>
-          {technicalCards.length} constraint cards • {moodCards.length} mood cards available
-        </Text>
-      </View>
+        {/* Card Count Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.availableText}>
+            {technicalCards.length} constraint cards • {moodCards.length} mood cards available
+          </Text>
+        </View>
 
-      {/* Filter Options Toggle */}
-      <TouchableOpacity style={styles.filtersToggle} onPress={() => setShowFilters(!showFilters)}>
-        <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Filter Options</Text>
-      </TouchableOpacity>
+        {/* Filter Options Toggle */}
+        <TouchableOpacity style={styles.filtersToggle} onPress={() => setShowFilters(!showFilters)}>
+          <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Filter Options</Text>
+        </TouchableOpacity>
 
-      {/* Advanced Filters */}
-      {showFilters && (
-        <View style={styles.filtersContainer}>
-          <Text style={styles.filterTitle}>Constraint Card Suits</Text>
-          {TECHNICAL_SUITS.map(suit => (
-            <View key={suit} style={styles.checkboxRow}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  settings.allowedSuits.includes(suit) && styles.checkboxChecked,
-                ]}
-                onPress={() => {
-                  const newSuits = settings.allowedSuits.includes(suit)
-                    ? settings.allowedSuits.filter(s => s !== suit)
-                    : [...settings.allowedSuits, suit];
-                  updateSettings({ ...settings, allowedSuits: newSuits });
-                }}
-              >
-                {settings.allowedSuits.includes(suit) && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>{suit}</Text>
-            </View>
-          ))}
+        {/* Advanced Filters */}
+        {showFilters && (
+          <View style={styles.filtersContainer}>
+            <Text style={styles.filterTitle}>Constraint Card Suits</Text>
+            {TECHNICAL_SUITS.map(suit => (
+              <View key={suit} style={styles.checkboxRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    settings.allowedSuits.includes(suit) && styles.checkboxChecked,
+                  ]}
+                  onPress={() => {
+                    const newSuits = settings.allowedSuits.includes(suit)
+                      ? settings.allowedSuits.filter(s => s !== suit)
+                      : [...settings.allowedSuits, suit];
+                    updateSettings({ ...settings, allowedSuits: newSuits });
+                  }}
+                >
+                  {settings.allowedSuits.includes(suit) && <Text style={styles.checkmark}>✓</Text>}
+                </TouchableOpacity>
+                <Text style={styles.checkboxLabel}>{suit}</Text>
+              </View>
+            ))}
 
-          <Text style={styles.filterTitle}>Difficulty Levels</Text>
-          {LEVELS.map(level => (
-            <View key={level} style={styles.checkboxRow}>
-              <TouchableOpacity
-                style={[
-                  styles.checkbox,
-                  settings.allowedLevels.includes(level) && styles.checkboxChecked,
-                ]}
-                onPress={() => {
-                  const newLevels = settings.allowedLevels.includes(level)
-                    ? settings.allowedLevels.filter(l => l !== level)
-                    : [...settings.allowedLevels, level];
-                  updateSettings({ ...settings, allowedLevels: newLevels });
-                }}
-              >
-                {settings.allowedLevels.includes(level) && <Text style={styles.checkmark}>✓</Text>}
-              </TouchableOpacity>
-              <Text style={styles.checkboxLabel}>{level}</Text>
-            </View>
-          ))}
+            <Text style={styles.filterTitle}>Difficulty Levels</Text>
+            {LEVELS.map(level => (
+              <View key={level} style={styles.checkboxRow}>
+                <TouchableOpacity
+                  style={[
+                    styles.checkbox,
+                    settings.allowedLevels.includes(level) && styles.checkboxChecked,
+                  ]}
+                  onPress={() => {
+                    const newLevels = settings.allowedLevels.includes(level)
+                      ? settings.allowedLevels.filter(l => l !== level)
+                      : [...settings.allowedLevels, level];
+                    updateSettings({ ...settings, allowedLevels: newLevels });
+                  }}
+                >
+                  {settings.allowedLevels.includes(level) && (
+                    <Text style={styles.checkmark}>✓</Text>
+                  )}
+                </TouchableOpacity>
+                <Text style={styles.checkboxLabel}>{level}</Text>
+              </View>
+            ))}
 
-          {/* All Set Button */}
-          <TouchableOpacity style={styles.allSetButton} onPress={() => setShowFilters(false)}>
-            <Text style={styles.allSetButtonText}>✓ All Set!</Text>
+            {/* All Set Button */}
+            <TouchableOpacity style={styles.allSetButton} onPress={() => setShowFilters(false)}>
+              <Text style={styles.allSetButtonText}>✓ All Set!</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Getting Started */}
+        <View style={styles.gettingStarted}>
+          <Text style={styles.gettingStartedEmoji}>🎹</Text>
+          <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
+          <Text style={styles.gettingStartedText}>Draw 1 constraint card + mood inspiration</Text>
+
+          {/* Draw Button - Final Action */}
+          <TouchableOpacity style={styles.drawButton} onPress={handleDrawCards}>
+            <Text style={styles.drawButtonText}>🎲 Draw Cards</Text>
           </TouchableOpacity>
         </View>
-      )}
-
-      {/* Getting Started */}
-      <View style={styles.gettingStarted}>
-        <Text style={styles.gettingStartedEmoji}>🎹</Text>
-        <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
-        <Text style={styles.gettingStartedText}>Draw 1 constraint card + mood inspiration</Text>
-
-        {/* Draw Button - Final Action */}
-        <TouchableOpacity style={styles.drawButton} onPress={handleDrawCards}>
-          <Text style={styles.drawButtonText}>🎲 Draw Cards</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -134,13 +138,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
+  scrollView: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 32,
+    paddingBottom: 16,
   },
   header: {
     alignItems: 'center',
-    marginVertical: 24,
+    marginVertical: 16,
   },
   title: {
     fontSize: 28,
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   availableText: {
     fontSize: 12,
@@ -229,10 +236,10 @@ const styles = StyleSheet.create({
   },
   gettingStarted: {
     alignItems: 'center',
-    padding: 32,
+    padding: 24,
     backgroundColor: '#f9fafb',
     borderRadius: 12,
-    marginTop: 32,
+    marginTop: 24,
   },
   gettingStartedEmoji: {
     fontSize: 48,

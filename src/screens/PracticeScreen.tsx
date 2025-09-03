@@ -11,10 +11,10 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Card } from '../components/Card';
 import { Card as CardData } from '../constants/cards';
-import { getCardWidth } from '../utils/responsive';
+import { useResponsiveLayout } from '../utils/responsive';
 import { RootStackParamList } from '../types/navigation';
-import { getMoodCards, getTechnicalCards } from '../utils/cardUtils';
-import { loadSettings } from '../utils/storage';
+import { rerollMoodCard, rerollTechnicalCards } from '../utils/cardUtils';
+import { useSettings } from '../contexts/SettingsContext';
 
 type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'> & {
   onCardPress?: (card: CardData) => void;
@@ -23,81 +23,30 @@ type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'
 export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPress }) => {
   const { drawnCards } = route.params;
   const [currentCards, setCurrentCards] = useState<CardData[]>(drawnCards);
+  const { settings } = useSettings();
+  const { getCardWidth } = useResponsiveLayout();
 
   const constraintCards = currentCards.filter(card => card.suit !== '🎭 Mood');
   const moodCard = currentCards.find(card => card.suit === '🎭 Mood');
 
-  const handleRerollMood = async () => {
+  const handleRerollMood = () => {
     try {
-      const allMoodCards = getMoodCards();
-      const currentMoodCard = moodCard;
-
-      if (allMoodCards.length > 1) {
-        // Filter out the current mood card to ensure we get a different one
-        const availableMoodCards = allMoodCards.filter(card => card.id !== currentMoodCard?.id);
-        const newMoodCard =
-          availableMoodCards[Math.floor(Math.random() * availableMoodCards.length)];
-
-        setCurrentCards(prevCards => {
-          const newCards = prevCards.filter(card => card.suit !== '🎭 Mood');
-          return [newMoodCard, ...newCards];
-        });
-      } else {
-        Alert.alert('Info', 'Only one mood card available.');
-      }
-    } catch {
-      Alert.alert('Error', 'Unable to reroll mood card.');
+      const newCards = rerollMoodCard(currentCards);
+      setCurrentCards(newCards);
+    } catch (error) {
+      Alert.alert('Info', error instanceof Error ? error.message : 'Unable to reroll mood card');
     }
   };
 
-  const handleRerollTechnical = async () => {
+  const handleRerollTechnical = () => {
     try {
-      const settings = await loadSettings();
-      const allTechnicalCards = getTechnicalCards(settings);
-      const currentTechnicalCards = constraintCards;
-
-      if (allTechnicalCards.length > currentTechnicalCards.length) {
-        // Group technical cards by suit
-        const cardsBySuit: Record<string, CardData[]> = {};
-        allTechnicalCards.forEach(card => {
-          if (!cardsBySuit[card.suit]) {
-            cardsBySuit[card.suit] = [];
-          }
-          cardsBySuit[card.suit].push(card);
-        });
-
-        const availableSuits = Object.keys(cardsBySuit);
-        const shuffledSuits = availableSuits.sort(() => Math.random() - 0.5);
-        const newTechnicalCards: CardData[] = [];
-        const currentCardIds = currentTechnicalCards.map(card => card.id);
-
-        for (let i = 0; i < Math.min(currentTechnicalCards.length, shuffledSuits.length); i++) {
-          const suit = shuffledSuits[i];
-          const suitCards = cardsBySuit[suit];
-
-          // Filter out current cards to ensure we get different ones
-          const availableCardsInSuit = suitCards.filter(card => !currentCardIds.includes(card.id));
-
-          if (availableCardsInSuit.length > 0) {
-            const randomCard =
-              availableCardsInSuit[Math.floor(Math.random() * availableCardsInSuit.length)];
-            newTechnicalCards.push(randomCard);
-          } else {
-            // If no different cards available in this suit, pick any card from this suit
-            const randomCard = suitCards[Math.floor(Math.random() * suitCards.length)];
-            newTechnicalCards.push(randomCard);
-          }
-        }
-
-        setCurrentCards(prevCards => {
-          const currentMoodCard = prevCards.find(card => card.suit === '🎭 Mood');
-          return currentMoodCard ? [currentMoodCard, ...newTechnicalCards] : newTechnicalCards;
-        });
-      } else {
-        Alert.alert('Info', 'Not enough different cards available for reroll.');
-      }
-    } catch {
-      Alert.alert('Error', 'Unable to reroll technical cards.');
+      const newCards = rerollTechnicalCards(currentCards, settings);
+      setCurrentCards(newCards);
+    } catch (error) {
+      Alert.alert(
+        'Info',
+        error instanceof Error ? error.message : 'Unable to reroll technical cards'
+      );
     }
   };
 
