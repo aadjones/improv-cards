@@ -39,11 +39,10 @@ describe('Navigation Data Flow', () => {
     });
   });
 
-  it('should handle edge case with no mood card', () => {
+  it('should always include mood card in onecard design', () => {
     const settings = {
       ...DEFAULT_SETTINGS,
       technicalCount: 1,
-      includeMood: false,
     };
 
     const drawnCards = drawCards(settings);
@@ -55,6 +54,6 @@ describe('Navigation Data Flow', () => {
     const moodCard = navigationParams.drawnCards.find(card => card.suit === '🎭 Mood');
 
     expect(constraintCards.length).toBe(1);
-    expect(moodCard).toBeUndefined();
+    expect(moodCard).toBeDefined(); // Always includes mood in onecard design
   });
 });
