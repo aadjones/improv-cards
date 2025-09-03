@@ -13,7 +13,7 @@ import { Card } from '../components/Card';
 import { Card as CardData } from '../constants/cards';
 import { getCardWidth } from '../utils/responsive';
 import { RootStackParamList } from '../types/navigation';
-import { drawCards } from '../utils/cardUtils';
+import { getMoodCards, getTechnicalCards } from '../utils/cardUtils';
 import { loadSettings } from '../utils/storage';
 
 type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'> & {
@@ -27,13 +27,77 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
   const constraintCards = currentCards.filter(card => card.suit !== '🎭 Mood');
   const moodCard = currentCards.find(card => card.suit === '🎭 Mood');
 
-  const handleRedraw = async () => {
+  const handleRerollMood = async () => {
+    try {
+      const allMoodCards = getMoodCards();
+      const currentMoodCard = moodCard;
+
+      if (allMoodCards.length > 1) {
+        // Filter out the current mood card to ensure we get a different one
+        const availableMoodCards = allMoodCards.filter(card => card.id !== currentMoodCard?.id);
+        const newMoodCard =
+          availableMoodCards[Math.floor(Math.random() * availableMoodCards.length)];
+
+        setCurrentCards(prevCards => {
+          const newCards = prevCards.filter(card => card.suit !== '🎭 Mood');
+          return [newMoodCard, ...newCards];
+        });
+      } else {
+        Alert.alert('Info', 'Only one mood card available.');
+      }
+    } catch {
+      Alert.alert('Error', 'Unable to reroll mood card.');
+    }
+  };
+
+  const handleRerollTechnical = async () => {
     try {
       const settings = await loadSettings();
-      const newCards = drawCards(settings);
-      setCurrentCards(newCards);
+      const allTechnicalCards = getTechnicalCards(settings);
+      const currentTechnicalCards = constraintCards;
+
+      if (allTechnicalCards.length > currentTechnicalCards.length) {
+        // Group technical cards by suit
+        const cardsBySuit: Record<string, CardData[]> = {};
+        allTechnicalCards.forEach(card => {
+          if (!cardsBySuit[card.suit]) {
+            cardsBySuit[card.suit] = [];
+          }
+          cardsBySuit[card.suit].push(card);
+        });
+
+        const availableSuits = Object.keys(cardsBySuit);
+        const shuffledSuits = availableSuits.sort(() => Math.random() - 0.5);
+        const newTechnicalCards: CardData[] = [];
+        const currentCardIds = currentTechnicalCards.map(card => card.id);
+
+        for (let i = 0; i < Math.min(currentTechnicalCards.length, shuffledSuits.length); i++) {
+          const suit = shuffledSuits[i];
+          const suitCards = cardsBySuit[suit];
+
+          // Filter out current cards to ensure we get different ones
+          const availableCardsInSuit = suitCards.filter(card => !currentCardIds.includes(card.id));
+
+          if (availableCardsInSuit.length > 0) {
+            const randomCard =
+              availableCardsInSuit[Math.floor(Math.random() * availableCardsInSuit.length)];
+            newTechnicalCards.push(randomCard);
+          } else {
+            // If no different cards available in this suit, pick any card from this suit
+            const randomCard = suitCards[Math.floor(Math.random() * suitCards.length)];
+            newTechnicalCards.push(randomCard);
+          }
+        }
+
+        setCurrentCards(prevCards => {
+          const currentMoodCard = prevCards.find(card => card.suit === '🎭 Mood');
+          return currentMoodCard ? [currentMoodCard, ...newTechnicalCards] : newTechnicalCards;
+        });
+      } else {
+        Alert.alert('Info', 'Not enough different cards available for reroll.');
+      }
     } catch {
-      Alert.alert('Error', 'Unable to draw new cards. Please try again.');
+      Alert.alert('Error', 'Unable to reroll technical cards.');
     }
   };
 
@@ -49,6 +113,9 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
           marginBottom: 0,
         }}
       />
+      <TouchableOpacity style={styles.cardRerollButton} onPress={handleRerollTechnical}>
+        <Text style={styles.cardRerollButtonText}>🔄</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -65,11 +132,6 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Redraw Button */}
-      <TouchableOpacity style={styles.redrawButton} onPress={handleRedraw}>
-        <Text style={styles.redrawText}>🎲 Redraw Cards</Text>
-      </TouchableOpacity>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -78,12 +140,13 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
         {/* Mood Card - Banner Style */}
         {moodCard && (
           <View style={styles.moodBanner}>
-            <Text style={styles.moodEmoji}>🎭</Text>
             <View style={styles.moodContent}>
-              <Text style={styles.moodTitle}>{moodCard.title}</Text>
+              <Text style={styles.moodTitle}>🎭 Suggested Mood: {moodCard.title}</Text>
               <Text style={styles.moodDescription}>{moodCard.description}</Text>
             </View>
-            <Text style={styles.moodLabel}>Mood</Text>
+            <TouchableOpacity style={styles.rerollButton} onPress={handleRerollMood}>
+              <Text style={styles.rerollButtonText}>🔄</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -110,19 +173,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  redrawButton: {
-    margin: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#3b82f6',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  redrawText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   scrollView: {
     flex: 1,
   },
@@ -136,14 +186,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fef3f2',
     borderWidth: 1,
     borderColor: '#fecaca',
-    borderRadius: 8,
-    padding: 12,
-    margin: 16,
-    marginBottom: 12,
-  },
-  moodEmoji: {
-    fontSize: 24,
-    marginRight: 12,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    width: '100%',
   },
   moodContent: {
     flex: 1,
@@ -158,15 +204,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6b7280',
   },
-  moodLabel: {
-    fontSize: 12,
-    color: '#9ca3af',
-    fontWeight: '500',
-  },
   constraintSection: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   grid: {
     flexDirection: 'row',
@@ -175,7 +216,24 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   cardContainer: {
-    // Individual card styling handled by responsive values
+    position: 'relative',
+  },
+  cardRerollButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    padding: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardRerollButtonText: {
+    fontSize: 12,
+    color: 'white',
   },
   tipsSection: {
     marginTop: 16,
@@ -186,5 +244,15 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  rerollButton: {
+    padding: 8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+  rerollButtonText: {
+    fontSize: 14,
+    color: 'white',
   },
 });

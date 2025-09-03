@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   Card as CardType,
@@ -18,8 +18,8 @@ interface DrawScreenProps {
 }
 
 export function DrawScreen({ navigation }: DrawScreenProps) {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [showFilters, setShowFilters] = useState(false);
+  const [settings, setSettings] = useState<Settings>({ ...DEFAULT_SETTINGS, technicalCount: 1 });
+  const [showFilters, setShowFilters] = useState(true);
 
   useEffect(() => {
     loadSettings().then(setSettings);
@@ -50,73 +50,16 @@ export function DrawScreen({ navigation }: DrawScreenProps) {
         <Text style={styles.subtitle}>Creative constraints to inspire your practice</Text>
       </View>
 
-      {/* Controls */}
-      <View style={styles.controlsContainer}>
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>Number of constraint cards:</Text>
-          <View style={styles.stepper}>
-            <TouchableOpacity
-              style={styles.stepperButton}
-              onPress={() =>
-                updateSettings({
-                  ...settings,
-                  technicalCount: Math.max(1, settings.technicalCount - 1),
-                })
-              }
-              disabled={settings.technicalCount <= 1}
-            >
-              <Text
-                style={[
-                  styles.stepperButtonText,
-                  settings.technicalCount <= 1 && styles.stepperButtonDisabled,
-                ]}
-              >
-                −
-              </Text>
-            </TouchableOpacity>
-
-            <View style={styles.stepperValue}>
-              <Text style={styles.stepperValueText}>{settings.technicalCount}</Text>
-            </View>
-
-            <TouchableOpacity
-              style={styles.stepperButton}
-              onPress={() =>
-                updateSettings({
-                  ...settings,
-                  technicalCount: Math.min(4, settings.technicalCount + 1),
-                })
-              }
-              disabled={settings.technicalCount >= 4}
-            >
-              <Text
-                style={[
-                  styles.stepperButtonText,
-                  settings.technicalCount >= 4 && styles.stepperButtonDisabled,
-                ]}
-              >
-                +
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.controlRow}>
-          <Text style={styles.controlLabel}>Include mood card</Text>
-          <Switch
-            value={settings.includeMood}
-            onValueChange={value => updateSettings({ ...settings, includeMood: value })}
-          />
-        </View>
-
+      {/* Card Count Info */}
+      <View style={styles.infoContainer}>
         <Text style={styles.availableText}>
           {technicalCards.length} constraint cards • {moodCards.length} mood cards available
         </Text>
       </View>
 
-      {/* Advanced Filters Toggle */}
+      {/* Filter Options Toggle */}
       <TouchableOpacity style={styles.filtersToggle} onPress={() => setShowFilters(!showFilters)}>
-        <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Advanced Filters</Text>
+        <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Filter Options</Text>
       </TouchableOpacity>
 
       {/* Advanced Filters */}
@@ -163,6 +106,11 @@ export function DrawScreen({ navigation }: DrawScreenProps) {
               <Text style={styles.checkboxLabel}>{level}</Text>
             </View>
           ))}
+
+          {/* All Set Button */}
+          <TouchableOpacity style={styles.allSetButton} onPress={() => setShowFilters(false)}>
+            <Text style={styles.allSetButtonText}>✓ All Set!</Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -170,11 +118,7 @@ export function DrawScreen({ navigation }: DrawScreenProps) {
       <View style={styles.gettingStarted}>
         <Text style={styles.gettingStartedEmoji}>🎹</Text>
         <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
-        <Text style={styles.gettingStartedText}>
-          {settings.includeMood
-            ? `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''} + 1 mood`
-            : `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''}`}
-        </Text>
+        <Text style={styles.gettingStartedText}>Draw 1 constraint card + mood inspiration</Text>
 
         {/* Draw Button - Final Action */}
         <TouchableOpacity style={styles.drawButton} onPress={handleDrawCards}>
@@ -209,68 +153,9 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center',
   },
-  controlsContainer: {
-    backgroundColor: '#f9fafb',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-  },
-  controlRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  infoContainer: {
     alignItems: 'center',
-    marginBottom: 16,
-  },
-  controlLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
-  },
-  stepper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f9fafb',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    overflow: 'hidden',
-    height: 36,
-  },
-  stepperButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    width: 36,
-    height: 34,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  stepperButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#2563eb',
-    lineHeight: 16,
-  },
-  stepperButtonDisabled: {
-    color: '#d1d5db',
-  },
-  stepperValue: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#ffffff',
-    width: 36,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  stepperValueText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#1f2937',
-    lineHeight: 15,
+    marginBottom: 24,
   },
   availableText: {
     fontSize: 12,
@@ -363,5 +248,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6b7280',
     textAlign: 'center',
+  },
+  allSetButton: {
+    backgroundColor: '#10b981',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    marginTop: 20,
+    alignSelf: 'center',
+  },
+  allSetButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

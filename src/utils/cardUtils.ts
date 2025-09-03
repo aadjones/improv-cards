@@ -43,8 +43,8 @@ export function drawCards(settings: Settings): Card[] {
     selectedCards.push(randomCard);
   }
 
-  // Add mood card if requested
-  if (settings.includeMood && moodCards.length > 0) {
+  // Always add mood card
+  if (moodCards.length > 0) {
     const randomMoodCard = moodCards[Math.floor(Math.random() * moodCards.length)];
     selectedCards.unshift(randomMoodCard); // Add mood card first
   }
