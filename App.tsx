@@ -15,25 +15,13 @@ import { RootStackParamList } from './src/types/navigation';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-function TabNavigator({ navigation: parentNavigation }: { navigation: any }) {
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
-  const [activeTab, setActiveTab] = useState('Draw');
-
-  const handleCardPress = (card: CardType) => {
-    setSelectedCard(card);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedCard(null);
-  };
-
-  const handlePracticeThis = () => {
-    // Navigate to draw screen and set this card as drawn
-    setSelectedCard(null);
-    setActiveTab('Draw');
-    // TODO: Implement practice this functionality
-  };
-
+function TabNavigator({
+  navigation: parentNavigation,
+  onCardPress,
+}: {
+  navigation: unknown;
+  onCardPress: (card: CardType) => void;
+}) {
   return (
     <>
       <Tab.Navigator
@@ -65,14 +53,14 @@ function TabNavigator({ navigation: parentNavigation }: { navigation: any }) {
         <Tab.Screen
           name="Draw"
           options={{
-            title: 'Draw Cards',
-            tabBarLabel: 'Draw',
+            title: 'Setup',
+            tabBarLabel: 'Setup',
             tabBarIcon: ({ focused, color }) => (
               <Text style={{ fontSize: 20, color }}>{focused ? '🎲' : '🎯'}</Text>
             ),
           }}
         >
-          {_props => <DrawScreen navigation={parentNavigation} onCardPress={handleCardPress} />}
+          {_props => <DrawScreen navigation={parentNavigation} onCardPress={onCardPress} />}
         </Tab.Screen>
         <Tab.Screen
           name="Browse"
@@ -84,34 +72,44 @@ function TabNavigator({ navigation: parentNavigation }: { navigation: any }) {
             ),
           }}
         >
-          {props => <BrowseScreen {...props} onCardPress={handleCardPress} />}
+          {props => <BrowseScreen {...props} onCardPress={onCardPress} />}
         </Tab.Screen>
       </Tab.Navigator>
-
-      <CardDetailModal
-        card={selectedCard}
-        visible={!!selectedCard}
-        onClose={handleCloseModal}
-        onPracticeThis={activeTab === 'Browse' ? handlePracticeThis : undefined}
-      />
     </>
   );
 }
 
 export default function App() {
+  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
+
+  const handleCardPress = (card: CardType) => {
+    setSelectedCard(card);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCard(null);
+  };
+
   return (
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Main">
-            {props => <TabNavigator navigation={props.navigation} />}
+            {props => <TabNavigator navigation={props.navigation} onCardPress={handleCardPress} />}
           </Stack.Screen>
           <Stack.Screen
             name="Practice"
-            component={PracticeScreen}
-            options={{ headerShown: true, title: 'Practice Session' }}
-          />
+            options={{
+              headerShown: true,
+              title: 'Practice Session',
+            }}
+          >
+            {props => <PracticeScreen {...props} onCardPress={handleCardPress} />}
+          </Stack.Screen>
         </Stack.Navigator>
+
+        <CardDetailModal card={selectedCard} visible={!!selectedCard} onClose={handleCloseModal} />
+
         <StatusBar style="dark" />
       </NavigationContainer>
     </SafeAreaProvider>

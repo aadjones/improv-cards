@@ -1,14 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Switch } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Card, EmptyGridSlot } from '../components/Card';
 import {
   Card as CardType,
   Settings,
   DEFAULT_SETTINGS,
   TECHNICAL_SUITS,
   LEVELS,
-  MOOD_SUIT,
 } from '../constants/cards';
 import { drawCards, getTechnicalCards, getMoodCards } from '../utils/cardUtils';
 import { loadSettings, saveSettings } from '../utils/storage';
@@ -19,8 +17,7 @@ interface DrawScreenProps {
   onCardPress: (card: CardType) => void;
 }
 
-export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
-  const [drawnCards, setDrawnCards] = useState<CardType[]>([]);
+export function DrawScreen({ navigation }: DrawScreenProps) {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -39,28 +36,17 @@ export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
   const handleDrawCards = () => {
     try {
       const newCards = drawCards(settings);
-      setDrawnCards(newCards);
       navigation.navigate('Practice', { drawnCards: newCards });
     } catch {
       Alert.alert('Error', 'No technical cards available with current settings.');
     }
   };
 
-  const clearCards = () => {
-    setDrawnCards([]);
-  };
-
-  const moodCard = drawnCards.find(card => card.suit === MOOD_SUIT);
-
-  const getCardForSuit = (suit: string) => {
-    return drawnCards.find(card => card.suit === suit);
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Draw Practice Cards</Text>
+        <Text style={styles.title}>Practice Setup</Text>
         <Text style={styles.subtitle}>Creative constraints to inspire your practice</Text>
       </View>
 
@@ -128,11 +114,6 @@ export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
         </Text>
       </View>
 
-      {/* Draw Button */}
-      <TouchableOpacity style={styles.drawButton} onPress={handleDrawCards}>
-        <Text style={styles.drawButtonText}>🎲 Draw Cards</Text>
-      </TouchableOpacity>
-
       {/* Advanced Filters Toggle */}
       <TouchableOpacity style={styles.filtersToggle} onPress={() => setShowFilters(!showFilters)}>
         <Text style={styles.filtersToggleText}>{showFilters ? '▼' : '▶'} Advanced Filters</Text>
@@ -185,91 +166,21 @@ export function DrawScreen({ navigation, onCardPress }: DrawScreenProps) {
         </View>
       )}
 
-      {/* Drawn Cards */}
-      {drawnCards.length > 0 && (
-        <View style={styles.drawnCardsContainer}>
-          <Text style={styles.sessionTitle}>Your Practice Session</Text>
-
-          {/* Clear Button */}
-          <TouchableOpacity style={styles.clearButton} onPress={clearCards}>
-            <Text style={styles.clearButtonText}>Clear Cards</Text>
-          </TouchableOpacity>
-
-          {/* Mood Banner */}
-          {moodCard && (
-            <View style={styles.moodBanner}>
-              <Text style={styles.moodBannerEmoji}>🎭</Text>
-              <View style={styles.moodBannerContent}>
-                <Text style={styles.moodBannerTitle}>
-                  Practice with a{' '}
-                  <Text style={styles.moodBannerMood}>{moodCard.title.toUpperCase()}</Text> mood
-                </Text>
-                <Text style={styles.moodBannerDescription}>{moodCard.description}</Text>
-              </View>
-            </View>
-          )}
-
-          {/* Technical Cards Grid */}
-          <View style={styles.gridContainer}>
-            {/* Form Slot */}
-            {getCardForSuit('🏗️ Form') ? (
-              <Card
-                card={getCardForSuit('🏗️ Form')!}
-                isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit('🏗️ Form')!)}
-              />
-            ) : (
-              <EmptyGridSlot suitEmoji="🏗️" suitName="Form" />
-            )}
-
-            {/* Time Slot */}
-            {getCardForSuit('⏳ Time') ? (
-              <Card
-                card={getCardForSuit('⏳ Time')!}
-                isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit('⏳ Time')!)}
-              />
-            ) : (
-              <EmptyGridSlot suitEmoji="⏳" suitName="Time" />
-            )}
-
-            {/* Pitch Slot */}
-            {getCardForSuit('〰️ Pitch') ? (
-              <Card
-                card={getCardForSuit('〰️ Pitch')!}
-                isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit('〰️ Pitch')!)}
-              />
-            ) : (
-              <EmptyGridSlot suitEmoji="〰️" suitName="Pitch" />
-            )}
-
-            {/* Position Slot */}
-            {getCardForSuit('🎹 Position') ? (
-              <Card
-                card={getCardForSuit('🎹 Position')!}
-                isGridCard={true}
-                onPress={() => onCardPress(getCardForSuit('🎹 Position')!)}
-              />
-            ) : (
-              <EmptyGridSlot suitEmoji="🎹" suitName="Position" />
-            )}
-          </View>
-        </View>
-      )}
-
       {/* Getting Started */}
-      {drawnCards.length === 0 && (
-        <View style={styles.gettingStarted}>
-          <Text style={styles.gettingStartedEmoji}>🎹</Text>
-          <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
-          <Text style={styles.gettingStartedText}>
-            {settings.includeMood
-              ? `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''} + 1 mood`
-              : `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''}`}
-          </Text>
-        </View>
-      )}
+      <View style={styles.gettingStarted}>
+        <Text style={styles.gettingStartedEmoji}>🎹</Text>
+        <Text style={styles.gettingStartedTitle}>Ready to Practice?</Text>
+        <Text style={styles.gettingStartedText}>
+          {settings.includeMood
+            ? `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''} + 1 mood`
+            : `Draw ${settings.technicalCount} constraint card${settings.technicalCount > 1 ? 's' : ''}`}
+        </Text>
+
+        {/* Draw Button - Final Action */}
+        <TouchableOpacity style={styles.drawButton} onPress={handleDrawCards}>
+          <Text style={styles.drawButtonText}>🎲 Draw Cards</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -318,41 +229,48 @@ const styles = StyleSheet.create({
   stepper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f3f4f6',
-    borderRadius: 8,
+    backgroundColor: '#f9fafb',
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: '#e5e7eb',
+    overflow: 'hidden',
+    height: 36,
   },
   stepperButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    minWidth: 44,
-    minHeight: 44,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    width: 36,
+    height: 34,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   stepperButtonText: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
     color: '#2563eb',
+    lineHeight: 16,
   },
   stepperButtonDisabled: {
     color: '#d1d5db',
   },
   stepperValue: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     backgroundColor: '#ffffff',
-    minWidth: 40,
+    width: 36,
+    height: 34,
     alignItems: 'center',
+    justifyContent: 'center',
     borderLeftWidth: 1,
     borderRightWidth: 1,
     borderColor: '#e5e7eb',
   },
   stepperValueText: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: '#1f2937',
+    lineHeight: 15,
   },
   availableText: {
     fontSize: 12,
@@ -361,9 +279,11 @@ const styles = StyleSheet.create({
   drawButton: {
     backgroundColor: '#2563eb',
     borderRadius: 12,
-    padding: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: 20,
+    alignSelf: 'stretch',
   },
   drawButtonText: {
     color: '#ffffff',
@@ -421,65 +341,6 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     fontSize: 14,
     color: '#374151',
-  },
-  drawnCardsContainer: {
-    marginTop: 16,
-  },
-  sessionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 16,
-    color: '#111827',
-  },
-  clearButton: {
-    backgroundColor: '#6b7280',
-    borderRadius: 8,
-    padding: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  clearButtonText: {
-    color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  moodBanner: {
-    backgroundColor: '#fef3f2',
-    borderWidth: 2,
-    borderColor: '#fecaca',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  moodBannerEmoji: {
-    fontSize: 32,
-    marginRight: 12,
-  },
-  moodBannerContent: {
-    flex: 1,
-  },
-  moodBannerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
-  },
-  moodBannerMood: {
-    color: '#be185d',
-    fontWeight: 'bold',
-  },
-  moodBannerDescription: {
-    fontSize: 14,
-    color: '#6b7280',
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
   },
   gettingStarted: {
     alignItems: 'center',

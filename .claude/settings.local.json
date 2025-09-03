@@ -16,7 +16,12 @@
       "Bash(npx expo-doctor:*)",
       "Bash(find:*)",
       "Bash(tree:*)",
-      "Bash(npm run format:*)"
+      "Bash(npm run format:*)",
+      "Bash(npx expo start:*)",
+      "Bash(pkill:*)",
+      "Bash(npx react-native start:*)",
+      "Bash(npm start:*)",
+      "Bash(npx kill-port:*)"
     ],
     "deny": [],
     "ask": []

@@ -18,7 +18,7 @@ export function BrowseScreen({ onCardPress }: BrowseScreenProps) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Browse All Cards</Text>
+        <Text style={styles.title}>Card Library</Text>
         <Text style={styles.subtitle}>Explore all improvisation constraints</Text>
       </View>
 

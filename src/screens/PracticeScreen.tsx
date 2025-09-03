@@ -1,17 +1,41 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Card } from '../components/Card';
 import { Card as CardData } from '../constants/cards';
 import { getCardWidth } from '../utils/responsive';
 import { RootStackParamList } from '../types/navigation';
+import { drawCards } from '../utils/cardUtils';
+import { loadSettings } from '../utils/storage';
 
-type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'>;
+type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'> & {
+  onCardPress?: (card: CardData) => void;
+};
 
-export const PracticeScreen: React.FC<PracticeScreenProps> = ({ navigation, route }) => {
+export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPress }) => {
   const { drawnCards } = route.params;
-  const constraintCards = drawnCards.filter(card => card.suit !== '🎭 Mood');
-  const moodCard = drawnCards.find(card => card.suit === '🎭 Mood');
+  const [currentCards, setCurrentCards] = useState<CardData[]>(drawnCards);
+
+  const constraintCards = currentCards.filter(card => card.suit !== '🎭 Mood');
+  const moodCard = currentCards.find(card => card.suit === '🎭 Mood');
+
+  const handleRedraw = async () => {
+    try {
+      const settings = await loadSettings();
+      const newCards = drawCards(settings);
+      setCurrentCards(newCards);
+    } catch {
+      Alert.alert('Error', 'Unable to draw new cards. Please try again.');
+    }
+  };
 
   const cardSize = Math.min(getCardWidth(), 180);
 
@@ -19,7 +43,7 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ navigation, rout
     <View key={card.id} style={[styles.cardContainer, { width: cardSize }]}>
       <Card
         card={card}
-        onPress={() => {}} // No press action needed in practice mode
+        onPress={() => onCardPress?.(card)}
         style={{
           minHeight: cardSize * 1.2,
           marginBottom: 0,
@@ -41,34 +65,25 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ navigation, rout
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>← Setup</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>Practice Session</Text>
-        <TouchableOpacity style={styles.newSessionButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.newSessionText}>New Session</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Redraw Button */}
+      <TouchableOpacity style={styles.redrawButton} onPress={handleRedraw}>
+        <Text style={styles.redrawText}>🎲 Redraw Cards</Text>
+      </TouchableOpacity>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Mood Card - Full Width at Top */}
+        {/* Mood Card - Banner Style */}
         {moodCard && (
-          <View style={styles.moodSection}>
-            <View style={styles.moodCardContainer}>
-              <Card
-                card={moodCard}
-                onPress={() => {}}
-                style={{
-                  minHeight: cardSize * 0.8,
-                  marginBottom: 0,
-                }}
-              />
+          <View style={styles.moodBanner}>
+            <Text style={styles.moodEmoji}>🎭</Text>
+            <View style={styles.moodContent}>
+              <Text style={styles.moodTitle}>{moodCard.title}</Text>
+              <Text style={styles.moodDescription}>{moodCard.description}</Text>
             </View>
+            <Text style={styles.moodLabel}>Mood</Text>
           </View>
         )}
 
@@ -95,39 +110,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
+  redrawButton: {
+    margin: 16,
     paddingVertical: 12,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  backButtonText: {
-    color: '#3b82f6',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1f2937',
-  },
-  newSessionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     backgroundColor: '#3b82f6',
     borderRadius: 8,
+    alignItems: 'center',
   },
-  newSessionText: {
+  redrawText: {
     color: 'white',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
   },
   scrollView: {
@@ -137,14 +130,38 @@ const styles = StyleSheet.create({
     padding: 16,
     alignItems: 'center',
   },
-  moodSection: {
-    width: '100%',
-    marginBottom: 24,
+  moodBanner: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fef3f2',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    borderRadius: 8,
+    padding: 12,
+    margin: 16,
+    marginBottom: 12,
   },
-  moodCardContainer: {
-    width: '90%',
-    maxWidth: 400,
+  moodEmoji: {
+    fontSize: 24,
+    marginRight: 12,
+  },
+  moodContent: {
+    flex: 1,
+  },
+  moodTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#be185d',
+    marginBottom: 2,
+  },
+  moodDescription: {
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  moodLabel: {
+    fontSize: 12,
+    color: '#9ca3af',
+    fontWeight: '500',
   },
   constraintSection: {
     width: '100%',
