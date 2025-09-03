@@ -21,7 +21,8 @@
       "Bash(pkill:*)",
       "Bash(npx react-native start:*)",
       "Bash(npm start:*)",
-      "Bash(npx kill-port:*)"
+      "Bash(npx kill-port:*)",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []

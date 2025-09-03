@@ -11,10 +11,10 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Card } from '../components/Card';
 import { Card as CardData } from '../constants/cards';
-import { getCardWidth } from '../utils/responsive';
+import { useResponsiveLayout } from '../utils/responsive';
 import { RootStackParamList } from '../types/navigation';
-import { drawCards } from '../utils/cardUtils';
-import { loadSettings } from '../utils/storage';
+import { rerollMoodCard, rerollTechnicalCards } from '../utils/cardUtils';
+import { useSettings } from '../contexts/SettingsContext';
 
 type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'> & {
   onCardPress?: (card: CardData) => void;
@@ -23,17 +23,30 @@ type PracticeScreenProps = NativeStackScreenProps<RootStackParamList, 'Practice'
 export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPress }) => {
   const { drawnCards } = route.params;
   const [currentCards, setCurrentCards] = useState<CardData[]>(drawnCards);
+  const { settings } = useSettings();
+  const { getCardWidth } = useResponsiveLayout();
 
   const constraintCards = currentCards.filter(card => card.suit !== '🎭 Mood');
   const moodCard = currentCards.find(card => card.suit === '🎭 Mood');
 
-  const handleRedraw = async () => {
+  const handleRerollMood = () => {
     try {
-      const settings = await loadSettings();
-      const newCards = drawCards(settings);
+      const newCards = rerollMoodCard(currentCards);
       setCurrentCards(newCards);
-    } catch {
-      Alert.alert('Error', 'Unable to draw new cards. Please try again.');
+    } catch (error) {
+      Alert.alert('Info', error instanceof Error ? error.message : 'Unable to reroll mood card');
+    }
+  };
+
+  const handleRerollTechnical = () => {
+    try {
+      const newCards = rerollTechnicalCards(currentCards, settings);
+      setCurrentCards(newCards);
+    } catch (error) {
+      Alert.alert(
+        'Info',
+        error instanceof Error ? error.message : 'Unable to reroll technical cards'
+      );
     }
   };
 
@@ -49,6 +62,9 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
           marginBottom: 0,
         }}
       />
+      <TouchableOpacity style={styles.cardRerollButton} onPress={handleRerollTechnical}>
+        <Text style={styles.cardRerollButtonText}>🔄</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -65,11 +81,6 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Redraw Button */}
-      <TouchableOpacity style={styles.redrawButton} onPress={handleRedraw}>
-        <Text style={styles.redrawText}>🎲 Redraw Cards</Text>
-      </TouchableOpacity>
-
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -78,12 +89,13 @@ export const PracticeScreen: React.FC<PracticeScreenProps> = ({ route, onCardPre
         {/* Mood Card - Banner Style */}
         {moodCard && (
           <View style={styles.moodBanner}>
-            <Text style={styles.moodEmoji}>🎭</Text>
             <View style={styles.moodContent}>
-              <Text style={styles.moodTitle}>{moodCard.title}</Text>
+              <Text style={styles.moodTitle}>🎭 Suggested Mood: {moodCard.title}</Text>
               <Text style={styles.moodDescription}>{moodCard.description}</Text>
             </View>
-            <Text style={styles.moodLabel}>Mood</Text>
+            <TouchableOpacity style={styles.rerollButton} onPress={handleRerollMood}>
+              <Text style={styles.rerollButtonText}>🔄</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -110,19 +122,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
-  redrawButton: {
-    margin: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    backgroundColor: '#3b82f6',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  redrawText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600',
-  },
   scrollView: {
     flex: 1,
   },
@@ -136,14 +135,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fef3f2',
     borderWidth: 1,
     borderColor: '#fecaca',
-    borderRadius: 8,
-    padding: 12,
-    margin: 16,
-    marginBottom: 12,
-  },
-  moodEmoji: {
-    fontSize: 24,
-    marginRight: 12,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    width: '100%',
   },
   moodContent: {
     flex: 1,
@@ -158,15 +153,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6b7280',
   },
-  moodLabel: {
-    fontSize: 12,
-    color: '#9ca3af',
-    fontWeight: '500',
-  },
   constraintSection: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   grid: {
     flexDirection: 'row',
@@ -175,7 +165,24 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   cardContainer: {
-    // Individual card styling handled by responsive values
+    position: 'relative',
+  },
+  cardRerollButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    padding: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardRerollButtonText: {
+    fontSize: 12,
+    color: 'white',
   },
   tipsSection: {
     marginTop: 16,
@@ -186,5 +193,15 @@ const styles = StyleSheet.create({
     color: '#6b7280',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  rerollButton: {
+    padding: 8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 6,
+    marginLeft: 8,
+  },
+  rerollButtonText: {
+    fontSize: 14,
+    color: 'white',
   },
 });

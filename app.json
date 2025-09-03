@@ -1,31 +1,43 @@
 {
   "expo": {
-    "name": "PianoImprovCards",
-    "slug": "PianoImprovCards",
+    "name": "Unscored",
+    "slug": "Unscored",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.PianoImprovCards"
+      "bundleIdentifier": "com.anonymous.Unscored"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.PianoImprovCards"
+      "package": "com.anonymous.Unscored"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8965d56c-d1c7-4ab4-985d-419da5a9df81"
+      }
+    },
+    "owner": "aadjones",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/8965d56c-d1c7-4ab4-985d-419da5a9df81"
     }
   }
 }

@@ -1,24 +1,45 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card as CardType, SUITS } from '../constants/cards';
-import { getCardWidth, getFontSize, isTablet } from '../utils/responsive';
+import { useResponsiveLayout } from '../utils/responsive';
 
 interface CardProps {
   card: CardType;
   isGridCard?: boolean;
   onPress?: () => void;
-  style?: any;
+  style?: object;
 }
 
 const cardMargin = 8;
-const gridCardWidth = getCardWidth();
 
 export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
+  const { getCardWidth, getFontSize, isTablet } = useResponsiveLayout();
   const suitInfo = SUITS[card.suit];
   const suitEmoji = card.suit.split(' ')[0];
   const suitName = card.suit.split(' ')[1];
 
-  const cardStyle = isGridCard ? styles.gridCard : styles.regularCard;
+  const dynamicStyles = {
+    gridCard: {
+      padding: 12,
+      width: getCardWidth(),
+      aspectRatio: 1,
+    },
+    emoji: {
+      fontSize: getFontSize(24),
+    },
+    title: {
+      fontSize: getFontSize(isTablet ? 18 : 16),
+      fontWeight: 'bold' as const,
+      marginBottom: 8,
+    },
+    description: {
+      fontSize: getFontSize(isTablet ? 14 : 12),
+      lineHeight: getFontSize(isTablet ? 20 : 16),
+      opacity: 0.8,
+    },
+  };
+
+  const cardStyle = isGridCard ? dynamicStyles.gridCard : styles.regularCard;
   const containerStyle = [
     styles.container,
     cardStyle,
@@ -29,7 +50,7 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
   return (
     <TouchableOpacity style={containerStyle} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.header}>
-        <Text style={styles.emoji}>{suitEmoji}</Text>
+        <Text style={dynamicStyles.emoji}>{suitEmoji}</Text>
         {card.level && (
           <View style={[styles.levelBadge, { backgroundColor: 'rgba(255,255,255,0.8)' }]}>
             <Text style={[styles.levelText, { color: suitInfo.textColor }]}>{card.level}</Text>
@@ -38,11 +59,11 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
       </View>
 
       <View style={styles.content}>
-        <Text style={[styles.title, { color: suitInfo.textColor }]} numberOfLines={2}>
+        <Text style={[dynamicStyles.title, { color: suitInfo.textColor }]} numberOfLines={2}>
           {card.title}
         </Text>
         <Text
-          style={[styles.description, { color: suitInfo.textColor }]}
+          style={[dynamicStyles.description, { color: suitInfo.textColor }]}
           numberOfLines={isGridCard ? 4 : 5}
         >
           {card.description}
@@ -57,8 +78,16 @@ export function Card({ card, isGridCard = false, onPress, style }: CardProps) {
 }
 
 export function EmptyGridSlot({ suitEmoji, suitName }: { suitEmoji: string; suitName: string }) {
+  const { getCardWidth } = useResponsiveLayout();
+
+  const gridCardStyle = {
+    padding: 12,
+    width: getCardWidth(),
+    aspectRatio: 1,
+  };
+
   return (
-    <View style={[styles.container, styles.gridCard, styles.emptySlot]}>
+    <View style={[styles.container, gridCardStyle, styles.emptySlot]}>
       <View style={styles.emptyContent}>
         <Text style={styles.emptyEmoji}>{suitEmoji}</Text>
         <Text style={styles.emptySuitName}>{suitName}</Text>
@@ -87,11 +116,6 @@ const styles = StyleSheet.create({
     height: 200,
     flex: 1,
   },
-  gridCard: {
-    padding: 12,
-    width: gridCardWidth,
-    aspectRatio: 1, // Square cards for grid
-  },
   emptySlot: {
     backgroundColor: '#f9fafb',
     borderColor: '#d1d5db',
@@ -105,9 +129,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 8,
   },
-  emoji: {
-    fontSize: getFontSize(24),
-  },
   levelBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -119,16 +140,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  title: {
-    fontSize: getFontSize(isTablet ? 18 : 16),
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: getFontSize(isTablet ? 14 : 12),
-    lineHeight: getFontSize(isTablet ? 20 : 16),
-    opacity: 0.8,
   },
   footer: {
     alignItems: 'flex-end',

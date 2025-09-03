@@ -51,47 +51,45 @@ describe('cardUtils', () => {
   });
 
   describe('drawCards', () => {
-    it('should draw the correct number of technical cards', () => {
+    it('should draw technical cards plus mood card', () => {
       const settings = {
         ...DEFAULT_SETTINGS,
         technicalCount: 2,
-        includeMood: false,
       };
 
       const result = drawCards(settings);
 
-      expect(result).toHaveLength(2);
-      result.forEach(card => {
-        expect(card.suit).not.toBe(MOOD_SUIT);
-      });
+      expect(result).toHaveLength(3); // 2 technical + 1 mood
+      expect(result.some(card => card.suit === MOOD_SUIT)).toBe(true);
+      expect(result.filter(card => card.suit !== MOOD_SUIT)).toHaveLength(2);
     });
 
-    it('should include mood card when requested', () => {
+    it('should always include mood card', () => {
       const settings = {
         ...DEFAULT_SETTINGS,
         technicalCount: 1,
-        includeMood: true,
       };
 
       const result = drawCards(settings);
 
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(2); // 1 technical + 1 mood
       expect(result.some(card => card.suit === MOOD_SUIT)).toBe(true);
       expect(result.some(card => card.suit !== MOOD_SUIT)).toBe(true);
     });
 
-    it('should not draw duplicate suits', () => {
+    it('should not draw duplicate suits (except mood)', () => {
       const settings = {
         ...DEFAULT_SETTINGS,
         technicalCount: 3,
-        includeMood: false,
       };
 
       const result = drawCards(settings);
-      const suits = result.map(card => card.suit);
-      const uniqueSuits = new Set(suits);
+      const technicalCards = result.filter(card => card.suit !== MOOD_SUIT);
+      const technicalSuits = technicalCards.map(card => card.suit);
+      const uniqueTechnicalSuits = new Set(technicalSuits);
 
-      expect(suits.length).toBe(uniqueSuits.size);
+      expect(technicalSuits.length).toBe(uniqueTechnicalSuits.size);
+      expect(result.some(card => card.suit === MOOD_SUIT)).toBe(true);
     });
 
     it('should throw error when no technical cards available', () => {
@@ -99,7 +97,6 @@ describe('cardUtils', () => {
         ...DEFAULT_SETTINGS,
         allowedSuits: [],
         technicalCount: 1,
-        includeMood: false,
       };
 
       expect(() => drawCards(settings)).toThrow('No technical cards available');
