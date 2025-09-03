@@ -3,7 +3,10 @@ import { Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DrawScreen } from './src/screens/DrawScreen';
 import { BrowseScreen } from './src/screens/BrowseScreen';
@@ -19,7 +22,7 @@ function TabNavigator({
   navigation: parentNavigation,
   onCardPress,
 }: {
-  navigation: unknown;
+  navigation: NativeStackNavigationProp<RootStackParamList>;
   onCardPress: (card: CardType) => void;
 }) {
   return (
