@@ -8,40 +8,36 @@ Piano Improvisation Cards (branded as "Unscored") is a React Native/Expo mobile 
 
 ## High-Level System Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                           App.tsx                                │
-│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │  Error Boundary │  │  Settings       │  │  Navigation     │  │
-│  │                 │  │  Context        │  │  (Stack + Tabs) │  │
-│  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-                ┌───────────────┼───────────────┐
-                │               │               │
-        ┌───────▼──────┐ ┌──────▼──────┐ ┌─────▼──────┐
-        │ DrawScreen   │ │ BrowseScreen│ │PracticeScreen│
-        │ (Practice)   │ │             │ │            │
-        └──────────────┘ └─────────────┘ └────────────┘
-                │               │               │
-        ┌───────▼───────────────▼───────────────▼──────┐
-        │           Shared Components                   │
-        │  • Card Component                            │
-        │  • CardDetailModal (Global)                  │
-        └──────────────────────────────────────────────┘
-                                │
-        ┌───────────────────────▼───────────────────────┐
-        │              Core Utilities                   │
-        │  • cardUtils (Drawing Logic)                 │
-        │  • storage (AsyncStorage)                    │
-        │  • responsive (Layout)                       │
-        └──────────────────────────────────────────────┘
-                                │
-        ┌───────────────────────▼───────────────────────┐
-        │               Data Layer                      │
-        │  • cards.ts (Static Card Dataset)           │
-        │  • Types & Constants                         │
-        └──────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A[App.tsx] --> B[Error Boundary]
+    A --> C[Settings Context]
+    A --> D[Navigation<br/>Stack + Tabs]
+
+    D --> E[DrawScreen<br/>Practice]
+    D --> F[BrowseScreen]
+    D --> G[PracticeScreen]
+
+    E --> H[Shared Components]
+    F --> H
+    G --> H
+
+    H --> I[Card Component]
+    H --> J[CardDetailModal<br/>Global]
+
+    H --> K[Core Utilities]
+    K --> L[cardUtils<br/>Drawing Logic]
+    K --> M[storage<br/>AsyncStorage]
+    K --> N[responsive<br/>Layout]
+
+    K --> O[Data Layer]
+    O --> P[cards.ts<br/>Static Card Dataset]
+    O --> Q[Types & Constants]
+
+    style A fill:#e1f5fe
+    style H fill:#f3e5f5
+    style K fill:#e8f5e8
+    style O fill:#fff3e0
 ```
 
 ## Component Architecture & Relationships
@@ -128,14 +124,16 @@ This pattern allows the Practice screen to overlay the tabs while maintaining ta
 
 The app follows **React's unidirectional data flow** with minimal external state management:
 
-```
-Settings Context (Global)
-    ↓
-Screen Components (Local State)
-    ↓
-Utility Functions (Pure Functions)
-    ↓
-Static Data (Constants)
+```mermaid
+flowchart TD
+    A[Settings Context<br/>Global] --> B[Screen Components<br/>Local State]
+    B --> C[Utility Functions<br/>Pure Functions]
+    C --> D[Static Data<br/>Constants]
+
+    style A fill:#e3f2fd
+    style B fill:#f1f8e9
+    style C fill:#fff8e1
+    style D fill:#fce4ec
 ```
 
 ### Settings Context Pattern
@@ -166,26 +164,40 @@ Each screen manages its own UI state:
 
 ## File & Folder Structure
 
-```
-src/
-├── components/           # Reusable UI components
-│   ├── Card.tsx         # Universal card display component
-│   ├── CardDetailModal.tsx  # Global card detail modal
-│   └── ErrorBoundary.tsx    # Error handling component
-├── constants/
-│   └── cards.ts         # Card dataset, types, and constants
-├── contexts/
-│   └── SettingsContext.tsx  # Global settings management
-├── screens/             # Screen-level components
-│   ├── BrowseScreen.tsx # Card catalog exploration
-│   ├── DrawScreen.tsx   # Practice setup and drawing
-│   └── PracticeScreen.tsx   # Active practice session
-├── types/
-│   └── navigation.ts    # TypeScript navigation types
-└── utils/              # Pure utility functions
-    ├── cardUtils.ts    # Card selection and drawing logic
-    ├── responsive.ts   # Layout and sizing utilities
-    └── storage.ts      # AsyncStorage abstraction
+```mermaid
+graph LR
+    A[src/] --> B[components/]
+    A --> C[constants/]
+    A --> D[contexts/]
+    A --> E[screens/]
+    A --> F[types/]
+    A --> G[utils/]
+
+    B --> B1[Card.tsx<br/>Universal card display]
+    B --> B2[CardDetailModal.tsx<br/>Global card detail modal]
+    B --> B3[ErrorBoundary.tsx<br/>Error handling component]
+
+    C --> C1[cards.ts<br/>Card dataset, types, constants]
+
+    D --> D1[SettingsContext.tsx<br/>Global settings management]
+
+    E --> E1[BrowseScreen.tsx<br/>Card catalog exploration]
+    E --> E2[DrawScreen.tsx<br/>Practice setup and drawing]
+    E --> E3[PracticeScreen.tsx<br/>Active practice session]
+
+    F --> F1[navigation.ts<br/>TypeScript navigation types]
+
+    G --> G1[cardUtils.ts<br/>Card selection and drawing logic]
+    G --> G2[responsive.ts<br/>Layout and sizing utilities]
+    G --> G3[storage.ts<br/>AsyncStorage abstraction]
+
+    style A fill:#e8f5e8
+    style B fill:#e1f5fe
+    style C fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#e3f2fd
+    style F fill:#fce4ec
+    style G fill:#f1f8e9
 ```
 
 ### Key Design Decisions
