@@ -1,81 +1,40 @@
-# Piano Improvisation Cards - React Native App
+# Music Practice Cards - Monorepo
 
-A React Native mobile app for piano improvisation practice, converted from the original React web app. This app provides creative constraints to inspire and guide your piano improvisation practice sessions.
+A monorepo containing two React Native/Expo apps for musical practice: **Improvisation Cards** and **Practice Cards**. Both apps share core functionality through a common package architecture.
 
-## Features
+## Apps Overview
 
-### 🎲 Draw Cards Mode
+### 🎹 Improvisation Cards (`apps/improv`)
+Creative constraint cards for piano improvisation practice.
 
+**Features:**
 - Draw 1-4 constraint cards from different suits (Form, Time, Pitch, Position)
-- Optionally add a mood card for emotional context
+- Optional mood cards for emotional context
 - 2x2 grid layout optimized for practice sessions
 - Advanced filtering by suits and difficulty levels
-- Settings persistence with AsyncStorage
+- Browse mode to explore all available cards
 
-### 📚 Browse Mode
+### 🎯 Practice Cards (`apps/practice`)
+Mindful practice prompts to guide attention across practice dimensions.
 
-- Explore all available cards organized by suit
-- Tap any card to view detailed descriptions
-- "Practice This" functionality to start a session with a specific card
+**Features:**
+- Biased card drawing that promotes neglected practice areas
+- 36 practice cards across 6 suits: tone, intonation, rhythm, phrasing, body, listening
+- Balance view showing practice distribution over last 14 days
+- Minimal, distraction-free interface
+- No gamification or guilt - just mindful guidance
 
-### 🎹 Card Types
-
-- **🎭 Mood Cards**: Emotional context (Playful, Somber, Energetic, etc.)
-- **🏗️ Form Cards**: Structural constraints (ABA, Loop, Rondo, etc.)
-- **⏳ Time Cards**: Rhythmic constraints (Waltz, March, Syncopation, etc.)
-- **〰️ Pitch Cards**: Melodic/harmonic constraints (Drone, Alberti, Chorale, etc.)
-- **🎹 Position Cards**: Physical/technical constraints (Crossover, Mirror, etc.)
-
-### 📱 Mobile-Optimized Design
-
-- Native React Navigation with tab-based interface
-- Touch-optimized UI for phones and tablets
-- Responsive design that scales for different screen sizes
-- Native styling (no Tailwind dependency)
-- Smooth animations and transitions
-
-## Technical Stack
-
-- **React Native** with **Expo** for cross-platform development
-- **TypeScript** for type safety
-- **React Navigation** for navigation (Bottom Tabs)
-- **AsyncStorage** for persistent settings
-- **Native styling** optimized for mobile devices
-
-## Project Structure
+## Monorepo Structure
 
 ```
-src/
-├── components/
-│   ├── Card.tsx                 # Reusable card component with touch support
-│   └── CardDetailModal.tsx      # Modal for card details
-├── screens/
-│   ├── DrawScreen.tsx           # Main practice card drawing interface
-│   └── BrowseScreen.tsx         # Browse all cards by suit
-├── constants/
-│   └── cards.ts                 # Card data, types, and constants
-└── utils/
-    ├── cardUtils.ts             # Card drawing and filtering logic
-    ├── responsive.ts            # Responsive design utilities
-    └── storage.ts               # AsyncStorage wrapper functions
+├── apps/
+│   ├── improv/           # Improvisation Cards app
+│   └── practice/         # Practice Cards app
+├── packages/
+│   └── core/             # Shared types, rotation logic, and storage interface
+├── package.json          # Workspace configuration
+└── tsconfig.base.json    # Shared TypeScript config
 ```
-
-## Key Features for Piano Practice
-
-### Practice Session Workflow
-
-1. **Set Preferences**: Choose number of cards, include/exclude moods, filter by difficulty
-2. **Draw Cards**: Get random constraints laid out in an intuitive 2x2 grid
-3. **Practice**: Use the mood banner and constraint cards to guide improvisation
-4. **Explore**: Browse all cards to understand different techniques and approaches
-
-### Tablet-Optimized Experience
-
-The app is specifically designed to work well on tablets, making it perfect for:
-
-- Placing on a piano music stand
-- Easy reading while practicing
-- Touch-friendly controls even with hands positioned for playing
 
 ## Getting Started
 
@@ -88,81 +47,188 @@ The app is specifically designed to work well on tablets, making it perfect for:
 
 ### Installation
 
-1. Clone or download the project
+1. Clone the repository
 2. Install dependencies:
-
    ```bash
    npm install
    ```
 
-3. Start the development server:
-   ```bash
-   npm start
-   ```
+### Running the Apps
 
-### Running on Different Platforms
+**Practice Cards:**
+```bash
+# From project root
+npm run start --workspace=apps/practice
 
-- **iOS**: `npm run ios`
-- **Android**: `npm run android`
-- **Web** (for testing): `npm run web`
+# Or from app directory
+cd apps/practice && npm start
+```
 
-## Configuration
+**Improvisation Cards:**
+```bash
+# From project root
+npm run start --workspace=apps/improv
 
-### Card Data
+# Or from app directory
+cd apps/improv && npm start
+```
 
-Cards are defined in `src/constants/cards.ts`. Each card includes:
+### Platform-Specific Commands
 
-- `id`: Unique identifier
-- `title`: Display name
-- `suit`: Category (Mood, Form, Time, Pitch, Position)
-- `level`: Difficulty (Beginner, Intermediate, Advanced) or null for mood cards
-- `description`: Detailed explanation of the constraint
+```bash
+# Web (for testing)
+npm run web --workspace=apps/practice
+npm run web --workspace=apps/improv
 
-### Responsive Design
+# iOS
+npm run ios --workspace=apps/practice
+npm run ios --workspace=apps/improv
 
-The app automatically adapts to different screen sizes:
+# Android
+npm run android --workspace=apps/practice
+npm run android --workspace=apps/improv
 
-- **Phone**: 2-column card layout
-- **Tablet**: 3-column layout
-- **Large Tablet**: 4-column layout
+# TypeScript checking
+npm run typecheck --workspace=apps/practice
+npm run typecheck --workspace=apps/improv
+```
 
-Font sizes and spacing scale accordingly.
+## App Details
+
+### Practice Cards App
+
+**Philosophy:** Help advanced musicians maintain attention balance across practice dimensions without gamification or guilt.
+
+**Core Mechanism:** The app tracks which practice suits you've drawn recently and biases future draws toward neglected areas (last 14 days).
+
+**Practice Suits:**
+- **Tone**: Sound quality, attack, resonance, color palette
+- **Intonation**: Pitch accuracy, harmonic context, temperament
+- **Rhythm**: Timing, subdivision, polyrhythm, metric displacement
+- **Phrasing**: Musical breathing, conversation, dynamic architecture
+- **Body**: Physical awareness, posture, tension release, movement
+- **Listening**: Recording analysis, acoustic awareness, spatial imaging
+
+**Example Cards:**
+- "Begin from silence" (tone)
+- "Double-stop resonance" (intonation)
+- "Subdivide internally" (rhythm)
+- "Breath-shaped line" (phrasing)
+- "Unclench protocol" (body)
+- "Record & mirror" (listening)
+
+### Improvisation Cards App
+
+**Philosophy:** Creative constraints to inspire piano improvisation practice.
+
+**Card Types:**
+- **🎭 Mood**: Emotional context (Playful, Somber, Energetic)
+- **🏗️ Form**: Structural constraints (ABA, Loop, Rondo)
+- **⏳ Time**: Rhythmic constraints (Waltz, March, Syncopation)
+- **〰️ Pitch**: Melodic/harmonic constraints (Drone, Alberti, Chorale)
+- **🎹 Position**: Physical/technical constraints (Crossover, Mirror)
+
+## Shared Core Package
+
+The `packages/core` package provides:
+
+**Types:**
+```typescript
+type Card = {
+  id: string;
+  suit: string;
+  title: string;
+  body?: string;
+  tags?: string[];
+};
+
+type DrawEvent = {
+  cardId: string;
+  suit: string;
+  timestamp: number;
+};
+```
+
+**Rotation Logic:**
+- `drawBiasedCard()`: Draws cards with bias toward neglected suits
+- `suitDistribution()`: Calculates practice distribution over time window
+- Configurable bias settings (window days, cooldown periods)
+
+**Storage Interface:**
+```typescript
+interface PracticeStore {
+  getHistory(): Promise<DrawEvent[]>;
+  append(event: DrawEvent): Promise<void>;
+  clear(): Promise<void>;
+}
+```
 
 ## Development
 
-### Adding New Cards
+### Adding Cards to Practice App
 
-1. Add card data to `CARDS_DATA` array in `src/constants/cards.ts`
-2. Ensure proper suit classification and difficulty level
-3. Cards automatically appear in both Draw and Browse modes
+Edit `apps/practice/src/deck.ts`:
 
-### Customizing Appearance
+```typescript
+export const practiceDeck: Deck = {
+  suits: ["tone", "intonation", "rhythm", "phrasing", "body", "listening"],
+  cards: [
+    {
+      id: "tone-007",
+      suit: "tone",
+      title: "Your prompt title",
+      body: "Detailed guidance for the practice focus."
+    }
+    // ...
+  ]
+};
+```
 
-- Card colors are defined in the `SUITS` object in `src/constants/cards.ts`
-- Responsive breakpoints can be adjusted in `src/utils/responsive.ts`
-- Native styling is handled in each component's StyleSheet
+### Testing
 
-### Storage
+```bash
+# Run tests for core package
+npm test --workspace=packages/core
 
-User preferences (number of cards, included suits/levels, mood preference) are automatically saved to device storage and restored when the app starts.
+# Run tests for specific app
+npm test --workspace=apps/practice
+npm test --workspace=apps/improv
+```
 
-## Future Enhancements
+### TypeScript
 
-- Audio examples for each card type
-- Video demonstrations of techniques
-- Practice session timer and tracking
-- Custom card creation
-- Export practice session combinations
-- Integration with music notation software
+Both apps extend the shared `tsconfig.base.json` which provides path mapping to the core package:
 
-## Contributing
+```json
+{
+  "paths": {
+    "@core/*": ["packages/core/src/*"]
+  }
+}
+```
 
-When adding new improvisation techniques:
+## Bundle Configuration
 
-1. Follow the existing card structure
-2. Provide clear, actionable descriptions
-3. Assign appropriate difficulty levels
-4. Test on both phone and tablet layouts
+**Practice App:**
+- iOS: `com.yourco.practice`
+- Android: `com.yourco.practice`
+
+**Improvisation App:**
+- iOS: `com.anonymous.Unscored`
+- Android: `com.anonymous.Unscored`
+
+## Philosophy & Design Principles
+
+### Practice App
+- **Simple > Clever**: Minimal UI focused on the practice prompt
+- **No Guilt**: Balance view is optional and informational only
+- **Mindful Attention**: Prompts guide focus without prescribing techniques
+- **Advanced Users**: Assumes musical sophistication and self-direction
+
+### Improvisation App
+- **Creative Constraints**: Boundaries that spark rather than limit creativity
+- **Session-Oriented**: Designed for practice sessions, not daily habits
+- **Exploration**: Browse mode encourages discovery of new approaches
 
 ## License
 

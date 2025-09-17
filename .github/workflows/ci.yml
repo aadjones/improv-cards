@@ -42,6 +42,10 @@ jobs:
   expo-compatibility:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        app: [practice, improv]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -60,5 +64,5 @@ jobs:
         with:
           eas-version: latest
 
-      - name: Check Expo project structure
-        run: npx expo-doctor@latest
+      - name: Check Expo project structure for ${{ matrix.app }}
+        run: cd apps/${{ matrix.app }} && npx expo-doctor@latest
