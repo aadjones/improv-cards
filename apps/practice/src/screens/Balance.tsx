@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { suitDistribution } from '@core/rotation';
 import { localStore } from '../store/localStore';
 
@@ -26,21 +34,41 @@ export default function Balance() {
     setRefreshing(false);
   };
 
+  const clearHistory = async () => {
+    Alert.alert(
+      'Clear Practice History',
+      'This will permanently delete all your practice history and reset your balance. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await localStore.clear();
+              await loadDistribution();
+            } catch (error) {
+              console.error('Error clearing history:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   useEffect(() => {
     loadDistribution();
   }, []);
 
-  const suits = ['tone', 'intonation', 'rhythm', 'phrasing', 'body', 'listening'];
-  const maxCount = Math.max(...Object.values(distribution), 1);
+  const suits = ['physical', 'listening', 'time', 'expression', 'instrument'];
 
   const getSuitColor = (suit: string) => {
     const colors: Record<string, string> = {
-      tone: '#8B5A3C',
-      intonation: '#4A5D23',
-      rhythm: '#2C5530',
-      phrasing: '#1A365D',
-      body: '#744210',
+      physical: '#8B5A3C',
       listening: '#4C1D95',
+      time: '#2C5530',
+      expression: '#1A365D',
+      instrument: '#744210',
     };
     return colors[suit] || '#6B7280';
   };
@@ -74,31 +102,46 @@ export default function Balance() {
           </Text>
         </View>
       ) : (
-        <View style={styles.chartContainer}>
+        <View style={styles.gardenContainer}>
           {suits.map(suit => {
             const count = distribution[suit] || 0;
             const percentage = totalDraws > 0 ? (count / totalDraws) * 100 : 0;
-            const barWidth = maxCount > 0 ? (count / maxCount) * 100 : 0;
+
+            // Circle size based on square root for better visual scaling
+            const baseSize = 40;
+            const maxSize = 80;
+            const circleSize = count === 0 ? baseSize * 0.6 : baseSize + Math.sqrt(count) * 15;
+            const finalSize = Math.min(circleSize, maxSize);
 
             return (
-              <View key={suit} style={styles.barRow}>
-                <View style={styles.labelContainer}>
-                  <Text style={[styles.suitLabel, { color: getSuitColor(suit) }]}>{suit}</Text>
-                  <Text style={styles.countLabel}>
-                    {count} ({percentage.toFixed(0)}%)
+              <View key={suit} style={styles.circleContainer}>
+                <View
+                  style={[
+                    styles.circle,
+                    {
+                      width: finalSize,
+                      height: finalSize,
+                      backgroundColor: count === 0 ? 'transparent' : getSuitColor(suit),
+                      borderColor: getSuitColor(suit),
+                      borderWidth: count === 0 ? 2 : 0,
+                      borderStyle: count === 0 ? 'dashed' : 'solid',
+                      opacity: count === 0 ? 0.3 : 0.8,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.circleCount,
+                      { color: count === 0 ? getSuitColor(suit) : '#FFFFFF' },
+                    ]}
+                  >
+                    {count}
                   </Text>
                 </View>
-                <View style={styles.barContainer}>
-                  <View
-                    style={[
-                      styles.bar,
-                      {
-                        width: `${barWidth}%`,
-                        backgroundColor: getSuitColor(suit),
-                      },
-                    ]}
-                  />
-                </View>
+                <Text style={[styles.circleLabel, { color: getSuitColor(suit) }]}>
+                  {suit.replace('-', '\n')}
+                </Text>
+                <Text style={styles.circlePercentage}>{percentage.toFixed(0)}%</Text>
               </View>
             );
           })}
@@ -109,6 +152,9 @@ export default function Balance() {
         <Text style={styles.footerText}>
           Pull down to refresh • Balance updates automatically with each draw
         </Text>
+        <TouchableOpacity style={styles.clearButton} onPress={clearHistory}>
+          <Text style={styles.clearButtonText}>Clear History</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -161,39 +207,48 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textAlign: 'center',
   },
-  chartContainer: {
+  gardenContainer: {
     backgroundColor: '#F9FAFB',
     borderRadius: 12,
-    padding: 20,
-  },
-  barRow: {
-    marginBottom: 20,
-  },
-  labelContainer: {
+    padding: 24,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+  },
+  circleContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+    width: '30%',
+    minWidth: 100,
+  },
+  circle: {
+    borderRadius: 50,
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
-  suitLabel: {
+  circleCount: {
     fontSize: 16,
+    fontWeight: '700',
+  },
+  circleLabel: {
+    fontSize: 12,
     fontWeight: '600',
+    textAlign: 'center',
     textTransform: 'capitalize',
+    marginBottom: 4,
+    lineHeight: 14,
   },
-  countLabel: {
-    fontSize: 14,
-    color: '#6B7280',
+  circlePercentage: {
+    fontSize: 11,
+    color: '#9CA3AF',
     fontWeight: '500',
-  },
-  barContainer: {
-    height: 8,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  bar: {
-    height: '100%',
-    borderRadius: 4,
   },
   footer: {
     alignItems: 'center',
@@ -206,5 +261,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9CA3AF',
     textAlign: 'center',
+    marginBottom: 16,
+  },
+  clearButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+  },
+  clearButtonText: {
+    fontSize: 12,
+    color: '#EF4444',
+    fontWeight: '500',
+    textDecorationLine: 'underline',
   },
 });

@@ -24,8 +24,8 @@ describe('localStore', () => {
 
     it('parses and returns stored history', async () => {
       const storedEvents: DrawEvent[] = [
-        { cardId: 'tone-1', suit: 'tone', timestamp: 1234567890 },
-        { cardId: 'rhythm-1', suit: 'rhythm', timestamp: 1234567891 },
+        { cardId: 'physical-1', suit: 'physical', timestamp: 1234567890 },
+        { cardId: 'time-1', suit: 'time', timestamp: 1234567891 },
       ];
 
       mockStorage.getItem.mockResolvedValue(JSON.stringify(storedEvents));
@@ -48,8 +48,8 @@ describe('localStore', () => {
       mockStorage.setItem.mockResolvedValue();
 
       const newEvent: DrawEvent = {
-        cardId: 'tone-1',
-        suit: 'tone',
+        cardId: 'physical-1',
+        suit: 'physical',
         timestamp: Date.now(),
       };
 
@@ -63,11 +63,11 @@ describe('localStore', () => {
 
     it('adds new event to existing history', async () => {
       const existingEvents: DrawEvent[] = [
-        { cardId: 'rhythm-1', suit: 'rhythm', timestamp: 1234567890 },
+        { cardId: 'time-1', suit: 'time', timestamp: 1234567890 },
       ];
       const newEvent: DrawEvent = {
-        cardId: 'tone-1',
-        suit: 'tone',
+        cardId: 'physical-1',
+        suit: 'physical',
         timestamp: 1234567891,
       };
 
@@ -102,7 +102,7 @@ describe('localStore', () => {
       mockStorage.removeItem.mockResolvedValue();
 
       await localStore.getHistory();
-      await localStore.append({ cardId: 'test', suit: 'tone', timestamp: Date.now() });
+      await localStore.append({ cardId: 'test', suit: 'physical', timestamp: Date.now() });
       await localStore.clear();
 
       expect(mockStorage.getItem).toHaveBeenCalledWith(key);

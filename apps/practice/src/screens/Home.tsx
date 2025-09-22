@@ -32,12 +32,11 @@ export default function Home() {
 
   const getSuitColor = (suit: string) => {
     const colors: Record<string, string> = {
-      tone: '#8B5A3C',
-      intonation: '#4A5D23',
-      rhythm: '#2C5530',
-      phrasing: '#1A365D',
-      body: '#744210',
+      physical: '#8B5A3C',
       listening: '#4C1D95',
+      time: '#2C5530',
+      expression: '#1A365D',
+      instrument: '#744210',
     };
     return colors[suit] || '#6B7280';
   };

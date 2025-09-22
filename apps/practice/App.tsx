@@ -1,9 +1,11 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import Home from './src/screens/Home';
 import Balance from './src/screens/Balance';
+import Library from './src/screens/Library';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +25,7 @@ export default function App() {
           options={{
             title: 'Practice',
             tabBarLabel: 'Practice',
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text>,
           }}
         />
         <Tab.Screen
@@ -31,6 +34,16 @@ export default function App() {
           options={{
             title: 'Balance',
             tabBarLabel: 'Balance',
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>⚖️</Text>,
+          }}
+        />
+        <Tab.Screen
+          name="Library"
+          component={Library}
+          options={{
+            title: 'Library',
+            tabBarLabel: 'Library',
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>📚</Text>,
           }}
         />
       </Tab.Navigator>
