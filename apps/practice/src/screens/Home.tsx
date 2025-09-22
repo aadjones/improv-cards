@@ -36,7 +36,7 @@ export default function Home() {
       listening: '#4C1D95',
       time: '#2C5530',
       expression: '#1A365D',
-      'instrument-specific': '#744210',
+      instrument: '#744210',
     };
     return colors[suit] || '#6B7280';
   };

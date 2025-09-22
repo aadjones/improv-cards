@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import { suitDistribution } from '@core/rotation';
 import { localStore } from '../store/localStore';
 
@@ -26,11 +34,33 @@ export default function Balance() {
     setRefreshing(false);
   };
 
+  const clearHistory = async () => {
+    Alert.alert(
+      'Clear Practice History',
+      'This will permanently delete all your practice history and reset your balance. Are you sure?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Clear',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await localStore.clear();
+              await loadDistribution();
+            } catch (error) {
+              console.error('Error clearing history:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   useEffect(() => {
     loadDistribution();
   }, []);
 
-  const suits = ['physical', 'listening', 'time', 'expression', 'instrument-specific'];
+  const suits = ['physical', 'listening', 'time', 'expression', 'instrument'];
 
   const getSuitColor = (suit: string) => {
     const colors: Record<string, string> = {
@@ -38,7 +68,7 @@ export default function Balance() {
       listening: '#4C1D95',
       time: '#2C5530',
       expression: '#1A365D',
-      'instrument-specific': '#744210',
+      instrument: '#744210',
     };
     return colors[suit] || '#6B7280';
   };
@@ -122,6 +152,9 @@ export default function Balance() {
         <Text style={styles.footerText}>
           Pull down to refresh • Balance updates automatically with each draw
         </Text>
+        <TouchableOpacity style={styles.clearButton} onPress={clearHistory}>
+          <Text style={styles.clearButtonText}>Clear History</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -228,5 +261,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#9CA3AF',
     textAlign: 'center',
+    marginBottom: 16,
+  },
+  clearButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+  },
+  clearButtonText: {
+    fontSize: 12,
+    color: '#EF4444',
+    fontWeight: '500',
+    textDecorationLine: 'underline',
   },
 });

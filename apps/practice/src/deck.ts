@@ -1,7 +1,7 @@
 import { Deck } from '@core/types';
 
 export const practiceDeck: Deck = {
-  suits: ['physical', 'listening', 'time', 'expression', 'instrument-specific'],
+  suits: ['physical', 'listening', 'time', 'expression', 'instrument'],
   cards: [
     // Physical cards
     {
@@ -131,34 +131,34 @@ export const practiceDeck: Deck = {
       body: 'Play this passage as a heated but affectionate disagreement.',
     },
 
-    // Instrument-specific cards
+    // Instrument cards
     {
       id: 'instrument-001',
-      suit: 'instrument-specific',
+      suit: 'instrument',
       title: 'Bow speed vs pressure',
       body: 'Hold pitch constant; vary speed and pressure separately.',
     },
     {
       id: 'instrument-002',
-      suit: 'instrument-specific',
+      suit: 'instrument',
       title: 'Double-stop resonance',
       body: 'Find pure 3rds/6ths; adjust until beats vanish.',
     },
     {
       id: 'instrument-003',
-      suit: 'instrument-specific',
+      suit: 'instrument',
       title: 'Vibrato choices',
       body: 'Play same phrase with no vibrato, narrow vibrato, wide vibrato.',
     },
     {
       id: 'instrument-004',
-      suit: 'instrument-specific',
+      suit: 'instrument',
       title: 'Sul ponticello/ordinario',
       body: 'Explore bow positions from bridge to fingerboard.',
     },
     {
       id: 'instrument-005',
-      suit: 'instrument-specific',
+      suit: 'instrument',
       title: 'Finger pressure minimum',
       body: 'Use just enough left hand pressure to create clean sound.',
     },
