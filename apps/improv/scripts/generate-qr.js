@@ -72,7 +72,6 @@ function main() {
     console.log('• Android: Use Expo Go app "Scan QR Code" feature');
     console.log('• The QR code works permanently without dev server');
     console.log('• Share the SVG file or scan from terminal');
-
   } catch (error) {
     console.error('❌ Error generating QR code:', error.message);
     process.exit(1);
