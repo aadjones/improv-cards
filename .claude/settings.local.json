@@ -33,7 +33,10 @@
       "Bash(eas update:*)",
       "Bash(eas update:configure:*)",
       "Bash(qrcode-terminal:*)",
-      "Bash(eas update:list:*)"
+      "Bash(eas update:list:*)",
+      "Bash(eas build:list:*)",
+      "Bash(eas branch:list:*)",
+      "Bash(node scripts/generate-qr.js)"
     ],
     "deny": [],
     "ask": []
