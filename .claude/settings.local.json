@@ -32,7 +32,8 @@
       "Bash(eas whoami:*)",
       "Bash(eas update:*)",
       "Bash(eas update:configure:*)",
-      "Bash(qrcode-terminal:*)"
+      "Bash(qrcode-terminal:*)",
+      "Bash(eas update:list:*)"
     ],
     "deny": [],
     "ask": []
