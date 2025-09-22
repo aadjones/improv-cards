@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import Home from './src/screens/Home';
 import Balance from './src/screens/Balance';
+import Library from './src/screens/Library';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,6 +32,14 @@ export default function App() {
           options={{
             title: 'Balance',
             tabBarLabel: 'Balance',
+          }}
+        />
+        <Tab.Screen
+          name="Library"
+          component={Library}
+          options={{
+            title: 'Library',
+            tabBarLabel: 'Library',
           }}
         />
       </Tab.Navigator>
