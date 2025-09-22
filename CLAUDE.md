@@ -67,6 +67,46 @@ Based on evidence, either:
 - `npm run android` - Run on Android emulator
 - `npm run web` - Run in web browser (testing only)
 
+### QR Code Generation for Expo Go
+
+**NOTE: It is 2025** - Always check current year when searching for solutions.
+
+#### Permanent QR Code Generation (Recommended)
+
+Create a permanent QR code that works without running dev server:
+
+1. **Configure EAS Update**: `eas update:configure`
+2. **Publish update**: `eas update --auto --message "Description of changes"`
+3. **Generate QR code**: `npm run generate-qr` (see script below)
+
+**QR Code Script Setup:**
+Add to package.json scripts:
+```json
+"generate-qr": "node scripts/generate-qr.js"
+```
+
+The script reads your app.json to get the project ID and generates both terminal and SVG QR codes.
+
+#### Development QR Code (Temporary)
+
+For local development testing only:
+
+1. **Kill any running Metro processes**: `pkill -f metro` or `pkill -f expo`
+2. **Clear Metro cache**: `npx expo start --clear`
+3. **Start development server**: `npm start` or `npx expo start`
+4. **Wait for bundling**: Metro will bundle the app and display QR code
+5. **Tunnel option**: If QR code doesn't appear, try `npx expo start --tunnel`
+
+**Troubleshooting QR Code Issues:**
+- If no QR code appears, try `npx expo start --tunnel` for external access
+- For SDK compatibility errors, ensure Expo Go app version matches project SDK
+- Clear Expo Go cache: shake device → "Clear cache and reload"
+
+**URL Format for Expo Go (2025):**
+```
+exp://u.expo.dev/[project-id]?channel-name=main&runtime-version=exposdk:[sdk-version]
+```
+
 ### Installation
 
 - `npm install` - Install dependencies

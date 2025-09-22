@@ -25,7 +25,14 @@
       "Bash(npm test:*)",
       "Bash(mkdir:*)",
       "Bash(npm run:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "WebFetch(domain:expo.dev)",
+      "Bash(npx:*)",
+      "Bash(npm:*)",
+      "Bash(eas whoami:*)",
+      "Bash(eas update:*)",
+      "Bash(eas update:configure:*)",
+      "Bash(qrcode-terminal:*)"
     ],
     "deny": [],
     "ask": []
