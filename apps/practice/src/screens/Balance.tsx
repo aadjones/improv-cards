@@ -10,17 +10,34 @@ import {
 } from 'react-native';
 import { suitDistribution } from '@core/rotation';
 import { localStore } from '../store/localStore';
+import { getCompleteDeck } from '../deck';
 
 export default function Balance() {
   const [distribution, setDistribution] = useState<Record<string, number>>({});
+  const [suits, setSuits] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadDistribution = async () => {
     try {
-      const history = await localStore.getHistory();
+      const [deck, history] = await Promise.all([
+        getCompleteDeck(),
+        localStore.getHistory(),
+      ]);
+
       const dist = suitDistribution(history, 14);
       setDistribution(dist);
+
+      // Only show suits that have either:
+      // 1. Cards drawn in history, OR
+      // 2. Available cards in the current deck
+      const suitsWithActivity = deck.suits.filter(suit => {
+        const hasHistory = (dist[suit] || 0) > 0;
+        const hasCards = deck.cards.some(card => card.suit === suit);
+        return hasHistory || hasCards;
+      });
+
+      setSuits(suitsWithActivity);
     } catch (error) {
       console.error('Error loading distribution:', error);
     } finally {
@@ -60,8 +77,6 @@ export default function Balance() {
     loadDistribution();
   }, []);
 
-  const suits = ['physical', 'listening', 'time', 'expression', 'instrument'];
-
   const getSuitColor = (suit: string) => {
     const colors: Record<string, string> = {
       physical: '#8B5A3C',
@@ -69,6 +84,7 @@ export default function Balance() {
       time: '#2C5530',
       expression: '#1A365D',
       instrument: '#744210',
+      custom: '#7C2D12', // Distinctive orange-brown for custom prompts
     };
     return colors[suit] || '#6B7280';
   };

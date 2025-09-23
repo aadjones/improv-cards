@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { drawBiasedCard } from '@core/rotation';
 import { Card } from '@core/types';
-import { practiceDeck } from '../deck';
+import { getCompleteDeck } from '../deck';
 import { localStore } from '../store/localStore';
 
 export default function Home() {
@@ -12,8 +12,12 @@ export default function Home() {
   async function draw() {
     setIsDrawing(true);
     try {
-      const history = await localStore.getHistory();
-      const c = drawBiasedCard(practiceDeck, history, {
+      const [deck, history] = await Promise.all([
+        getCompleteDeck(),
+        localStore.getHistory(),
+      ]);
+
+      const c = drawBiasedCard(deck, history, {
         windowDays: 14,
         minSuitCooldown: 1,
       });
@@ -37,6 +41,7 @@ export default function Home() {
       time: '#2C5530',
       expression: '#1A365D',
       instrument: '#744210',
+      custom: '#7C2D12', // Distinctive orange-brown for custom prompts
     };
     return colors[suit] || '#6B7280';
   };

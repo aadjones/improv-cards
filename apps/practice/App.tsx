@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import Home from './src/screens/Home';
 import Balance from './src/screens/Balance';
 import Library from './src/screens/Library';
+import CustomPrompts from './src/screens/CustomPrompts';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +45,15 @@ export default function App() {
             title: 'Library',
             tabBarLabel: 'Library',
             tabBarIcon: () => <Text style={{ fontSize: 20 }}>📚</Text>,
+          }}
+        />
+        <Tab.Screen
+          name="CustomPrompts"
+          component={CustomPrompts}
+          options={{
+            title: 'Custom Prompts',
+            tabBarLabel: 'Custom',
+            tabBarIcon: () => <Text style={{ fontSize: 20 }}>✏️</Text>,
           }}
         />
       </Tab.Navigator>

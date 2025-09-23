@@ -1,6 +1,7 @@
 import { Deck } from '@core/types';
+import { customPromptsStore } from './store/customPromptsStore';
 
-export const practiceDeck: Deck = {
+export const staticPracticeDeck: Deck = {
   suits: ['physical', 'listening', 'time', 'expression', 'instrument'],
   cards: [
     // Physical cards
@@ -164,3 +165,27 @@ export const practiceDeck: Deck = {
     },
   ],
 };
+
+/**
+ * Creates a complete deck by merging static cards with user's custom prompts
+ */
+export async function getCompleteDeck(): Promise<Deck> {
+  const customCards = await customPromptsStore.getCustomCards();
+  const hasCustomCards = customCards.length > 0;
+
+  return {
+    suits: hasCustomCards
+      ? [...staticPracticeDeck.suits, 'custom']
+      : staticPracticeDeck.suits,
+    cards: [
+      ...staticPracticeDeck.cards,
+      ...customCards,
+    ],
+  };
+}
+
+/**
+ * Legacy export for backwards compatibility
+ * @deprecated Use getCompleteDeck() instead
+ */
+export const practiceDeck = staticPracticeDeck;
