@@ -14,7 +14,8 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
-    "generate-qr": "node scripts/generate-qr.js"
+    "generate-qr": "node scripts/generate-qr.js",
+    "deploy": "eas update --auto --message \"Deploy from npm script\""
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",

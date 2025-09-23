@@ -36,7 +36,8 @@
       "Bash(eas update:list:*)",
       "Bash(eas build:list:*)",
       "Bash(eas branch:list:*)",
-      "Bash(node scripts/generate-qr.js)"
+      "Bash(node scripts/generate-qr.js)",
+      "Bash(eas channel:list:*)"
     ],
     "deny": [],
     "ask": []

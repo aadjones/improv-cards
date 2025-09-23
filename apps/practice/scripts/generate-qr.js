@@ -39,16 +39,11 @@ function main() {
     const sdkVersion = expoVersion.replace(/[^0-9.]/g, '');
     const majorVersion = sdkVersion.split('.')[0];
 
-    // Get current git branch for channel name (matches eas update --auto behavior)
-    const gitBranch = execSync('git branch --show-current', { encoding: 'utf8' }).trim();
+    // Construct Expo Go URL
+    const expoUrl = `exp://u.expo.dev/${projectId}?channel-name=main&runtime-version=exposdk:${majorVersion}.0.0`;
 
-    // Construct Expo Go URLs for both platforms
-    const iosUrl = `exp://u.expo.dev/${projectId}?runtime-version=exposdk:${majorVersion}.0.0&channel-name=${gitBranch}&platform=ios`;
-    const androidUrl = `exp://u.expo.dev/${projectId}?runtime-version=exposdk:${majorVersion}.0.0&channel-name=${gitBranch}&platform=android`;
-
-    console.log('🎯 Generated Expo Go URLs:');
-    console.log('iOS:', iosUrl);
-    console.log('Android:', androidUrl);
+    console.log('🎯 Generated Expo Go URL:');
+    console.log(expoUrl);
     console.log('');
 
     // Check if qrcode is installed
@@ -59,22 +54,15 @@ function main() {
       execSync('npm install -g qrcode', { stdio: 'inherit' });
     }
 
-    // Generate terminal QR codes
-    console.log('📱 iOS QR Code:');
-    execSync(`npx qrcode-terminal "${iosUrl}"`, { stdio: 'inherit' });
+    // Generate terminal QR code
+    console.log('📱 Terminal QR Code:');
+    execSync(`npx qrcode-terminal "${expoUrl}"`, { stdio: 'inherit' });
     console.log('');
 
-    console.log('📱 Android QR Code:');
-    execSync(`npx qrcode-terminal "${androidUrl}"`, { stdio: 'inherit' });
-    console.log('');
-
-    // Generate SVG QR codes
-    const iosSvgPath = path.join(__dirname, '..', 'qr-code-ios.svg');
-    const androidSvgPath = path.join(__dirname, '..', 'qr-code-android.svg');
-    execSync(`qrcode -t svg -o "${iosSvgPath}" "${iosUrl}"`, { stdio: 'inherit' });
-    execSync(`qrcode -t svg -o "${androidSvgPath}" "${androidUrl}"`, { stdio: 'inherit' });
-    console.log(`💾 iOS SVG QR code saved to: ${iosSvgPath}`);
-    console.log(`💾 Android SVG QR code saved to: ${androidSvgPath}`);
+    // Generate SVG QR code
+    const svgPath = path.join(__dirname, '..', 'qr-code.svg');
+    execSync(`qrcode -t svg -o "${svgPath}" "${expoUrl}"`, { stdio: 'inherit' });
+    console.log(`💾 SVG QR code saved to: ${svgPath}`);
     console.log('');
 
     console.log('✅ QR Code Generation Complete!');

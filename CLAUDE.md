@@ -98,6 +98,7 @@ For local development testing only:
 5. **Tunnel option**: If QR code doesn't appear, try `npx expo start --tunnel`
 
 **Troubleshooting QR Code Issues:**
+- **"HTTP response error 404: There is no channel named main"**: Run `eas channel:create main` to create the missing channel
 - If no QR code appears, try `npx expo start --tunnel` for external access
 - For SDK compatibility errors, ensure Expo Go app version matches project SDK
 - Clear Expo Go cache: shake device → "Clear cache and reload"
