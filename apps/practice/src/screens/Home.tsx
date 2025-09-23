@@ -12,10 +12,7 @@ export default function Home() {
   async function draw() {
     setIsDrawing(true);
     try {
-      const [deck, history] = await Promise.all([
-        getCompleteDeck(),
-        localStore.getHistory(),
-      ]);
+      const [deck, history] = await Promise.all([getCompleteDeck(), localStore.getHistory()]);
 
       const c = drawBiasedCard(deck, history, {
         windowDays: 14,

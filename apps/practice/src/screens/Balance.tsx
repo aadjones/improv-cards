@@ -20,10 +20,7 @@ export default function Balance() {
 
   const loadDistribution = async () => {
     try {
-      const [deck, history] = await Promise.all([
-        getCompleteDeck(),
-        localStore.getHistory(),
-      ]);
+      const [deck, history] = await Promise.all([getCompleteDeck(), localStore.getHistory()]);
 
       const dist = suitDistribution(history, 14);
       setDistribution(dist);

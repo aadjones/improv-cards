@@ -174,13 +174,8 @@ export async function getCompleteDeck(): Promise<Deck> {
   const hasCustomCards = customCards.length > 0;
 
   return {
-    suits: hasCustomCards
-      ? [...staticPracticeDeck.suits, 'custom']
-      : staticPracticeDeck.suits,
-    cards: [
-      ...staticPracticeDeck.cards,
-      ...customCards,
-    ],
+    suits: hasCustomCards ? [...staticPracticeDeck.suits, 'custom'] : staticPracticeDeck.suits,
+    cards: [...staticPracticeDeck.cards, ...customCards],
   };
 }
 

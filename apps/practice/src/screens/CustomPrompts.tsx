@@ -50,9 +50,7 @@ function EditModal({ visible, prompt, onSave, onCancel }: EditModalProps) {
           <TouchableOpacity onPress={onCancel}>
             <Text style={styles.modalCancelText}>Cancel</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>
-            {prompt ? 'Edit Prompt' : 'New Prompt'}
-          </Text>
+          <Text style={styles.modalTitle}>{prompt ? 'Edit Prompt' : 'New Prompt'}</Text>
           <TouchableOpacity onPress={handleSave}>
             <Text style={styles.modalSaveText}>Save</Text>
           </TouchableOpacity>
