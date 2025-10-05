@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,6 +23,12 @@ export default function PracticeScreen() {
   const [drawnMood, setDrawnMood] = useState<CardType | null>(null); // For improv mood banner
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+
+  // Clear drawn cards when switching modes
+  useEffect(() => {
+    setDrawnCard(null);
+    setDrawnMood(null);
+  }, [mode]);
 
   const handleDraw = async () => {
     setIsDrawing(true);
