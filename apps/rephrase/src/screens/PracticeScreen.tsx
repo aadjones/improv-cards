@@ -5,14 +5,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Switch,
   ActivityIndicator,
 } from 'react-native';
 import { Card as CardType } from '@core/types';
 import { Card } from '../components/Card';
 import { CardDetailModal } from '../components/CardDetailModal';
 import { ModeSwitch } from '../components/ModeSwitch';
-import { drawPracticeCard, drawImprovCard } from '../utils/drawing';
+import { drawPracticeCard, drawRandomCard } from '../utils/drawing';
 import { getPracticeDeck, getImprovDeck } from '../data/cards';
 import { practiceStore } from '../store/practiceStore';
 
@@ -20,8 +19,8 @@ type Mode = 'practice' | 'improv';
 
 export default function PracticeScreen() {
   const [mode, setMode] = useState<Mode>('practice');
-  const [includeMood, setIncludeMood] = useState(true);
   const [drawnCard, setDrawnCard] = useState<CardType | null>(null);
+  const [drawnMood, setDrawnMood] = useState<CardType | null>(null); // For improv mood banner
   const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
@@ -29,6 +28,7 @@ export default function PracticeScreen() {
     setIsDrawing(true);
     try {
       let card: CardType;
+      let mood: CardType | null = null;
 
       if (mode === 'practice') {
         // Biased draw for practice mode
@@ -46,12 +46,20 @@ export default function PracticeScreen() {
           timestamp: Date.now(),
         });
       } else {
-        // Random draw for improv mode
+        // Random draw for improv mode: always draw mood + technical card
         const improvCards = getImprovDeck();
-        card = drawImprovCard(improvCards, includeMood);
+
+        // Draw mood card
+        const moodCards = improvCards.filter(c => c.suit === 'mood');
+        mood = drawRandomCard(moodCards);
+
+        // Draw technical card (non-mood)
+        const technicalCards = improvCards.filter(c => c.suit !== 'mood');
+        card = drawRandomCard(technicalCards);
       }
 
       setDrawnCard(card);
+      setDrawnMood(mood);
     } catch (error) {
       console.error('Error drawing card:', error);
       // TODO: Show error to user
@@ -73,21 +81,6 @@ export default function PracticeScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Mode Switcher */}
         <ModeSwitch mode={mode} onChange={setMode} />
-
-        {/* Improv Settings */}
-        {mode === 'improv' && (
-          <View style={styles.settingsSection}>
-            <View style={styles.settingRow}>
-              <Text style={styles.settingLabel}>Include mood card</Text>
-              <Switch
-                value={includeMood}
-                onValueChange={setIncludeMood}
-                trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-                thumbColor={includeMood ? '#2563EB' : '#F3F4F6'}
-              />
-            </View>
-          </View>
-        )}
 
         {/* Draw Button or Card */}
         {!drawnCard ? (
@@ -113,7 +106,21 @@ export default function PracticeScreen() {
           </View>
         ) : (
           <View style={styles.cardSection}>
+            {/* Mood Banner for Improv Mode */}
+            {drawnMood && (
+              <View style={styles.moodBanner}>
+                <Text style={styles.moodLabel}>MOOD</Text>
+                <Text style={styles.moodTitle}>{drawnMood.title}</Text>
+                {drawnMood.description && (
+                  <Text style={styles.moodDescription}>{drawnMood.description}</Text>
+                )}
+              </View>
+            )}
+
+            {/* Main Card */}
             <Card card={drawnCard} onPress={() => handleCardPress(drawnCard)} />
+
+            {/* Draw Again Button */}
             <TouchableOpacity
               style={styles.drawAgainButton}
               onPress={handleDraw}
@@ -144,22 +151,33 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: 40,
   },
-  settingsSection: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-    padding: 16,
-    backgroundColor: '#F9FAFB',
+  moodBanner: {
+    backgroundColor: '#FCE7F3',
     borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#BE185D',
   },
-  settingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  moodLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    color: '#9F1239',
+    marginBottom: 6,
   },
-  settingLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+  moodTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#9F1239',
+    marginBottom: 4,
+  },
+  moodDescription: {
+    fontSize: 14,
+    color: '#9F1239',
+    opacity: 0.85,
+    lineHeight: 20,
   },
   drawSection: {
     flex: 1,
