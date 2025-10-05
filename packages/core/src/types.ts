@@ -5,7 +5,8 @@ export type Card = {
   id: CardId;
   suit: SuitId;
   title: string; // short prompt
-  body?: string; // optional elaboration
+  description?: string; // optional elaboration (unified from body/description)
+  type: 'practice' | 'improv'; // card category
   tags?: string[]; // "mindful" | "technical" | "constraint" | etc.
   isCustom?: boolean; // true for user-created prompts
 };
@@ -24,7 +25,9 @@ export type DrawEvent = {
 export type CustomPrompt = {
   id: CardId;
   title: string;
-  body?: string;
+  description?: string;
+  type: 'practice' | 'improv'; // card category
+  suit?: string; // optional suit assignment
   createdAt: number; // timestamp
   updatedAt: number; // timestamp
 };
