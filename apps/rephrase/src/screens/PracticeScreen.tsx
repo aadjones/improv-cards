@@ -74,6 +74,22 @@ export default function PracticeScreen() {
     }
   };
 
+  const handleRerollMood = async () => {
+    // Redraw only the mood
+    const improvCards = getImprovDeck();
+    const moodCards = improvCards.filter(c => c.suit === 'mood');
+    const newMood = drawRandomCard(moodCards);
+    setDrawnMood(newMood);
+  };
+
+  const handleRerollTechnical = async () => {
+    // Redraw only the technical card
+    const improvCards = getImprovDeck();
+    const technicalCards = improvCards.filter(c => c.suit !== 'mood');
+    const newCard = drawRandomCard(technicalCards);
+    setDrawnCard(newCard);
+  };
+
   const handleCardPress = (card: CardType) => {
     setSelectedCard(card);
   };
@@ -100,7 +116,7 @@ export default function PracticeScreen() {
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
                 <Text style={styles.drawButtonText}>
-                  {mode === 'practice' ? 'Draw Prompt' : 'Draw Card'}
+                  {mode === 'practice' ? 'Draw Prompt' : 'Draw Cards'}
                 </Text>
               )}
             </TouchableOpacity>
@@ -115,7 +131,16 @@ export default function PracticeScreen() {
             {/* Mood Banner for Improv Mode */}
             {drawnMood && (
               <View style={styles.moodBanner}>
-                <Text style={styles.moodLabel}>MOOD</Text>
+                <View style={styles.bannerHeader}>
+                  <Text style={styles.moodLabel}>MOOD</Text>
+                  <TouchableOpacity
+                    style={styles.refreshButton}
+                    onPress={handleRerollMood}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Text style={styles.refreshIcon}>↻</Text>
+                  </TouchableOpacity>
+                </View>
                 <Text style={styles.moodTitle}>{drawnMood.title}</Text>
                 {drawnMood.description && (
                   <Text style={styles.moodDescription}>{drawnMood.description}</Text>
@@ -124,7 +149,11 @@ export default function PracticeScreen() {
             )}
 
             {/* Main Card */}
-            <Card card={drawnCard} onPress={() => handleCardPress(drawnCard)} />
+            <Card
+              card={drawnCard}
+              onPress={() => handleCardPress(drawnCard)}
+              onRefresh={mode === 'improv' ? handleRerollTechnical : undefined}
+            />
 
             {/* Draw Again Button */}
             <TouchableOpacity
@@ -133,7 +162,7 @@ export default function PracticeScreen() {
               disabled={isDrawing}
             >
               <Text style={styles.drawAgainText}>
-                {isDrawing ? 'Drawing...' : 'Draw Again'}
+                {isDrawing ? 'Drawing...' : 'Draw New Cards'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -166,12 +195,25 @@ const styles = StyleSheet.create({
     borderLeftWidth: 4,
     borderLeftColor: '#BE185D',
   },
+  bannerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   moodLabel: {
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1.2,
     color: '#9F1239',
-    marginBottom: 6,
+  },
+  refreshButton: {
+    padding: 4,
+  },
+  refreshIcon: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#9F1239',
   },
   moodTitle: {
     fontSize: 20,

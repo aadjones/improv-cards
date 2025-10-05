@@ -6,10 +6,11 @@ import { SUIT_COLORS } from '../data/cards';
 interface CardProps {
   card: CardType;
   onPress?: () => void;
+  onRefresh?: () => void;
   style?: object;
 }
 
-export function Card({ card, onPress, style }: CardProps) {
+export function Card({ card, onPress, onRefresh, style }: CardProps) {
   const suitColors = SUIT_COLORS[card.suit] || SUIT_COLORS.custom;
 
   const containerStyle = [
@@ -27,6 +28,18 @@ export function Card({ card, onPress, style }: CardProps) {
         <Text style={[styles.suitLabel, { color: suitColors.text }]}>
           {card.suit.toUpperCase()}
         </Text>
+        {onRefresh && (
+          <TouchableOpacity
+            style={styles.refreshButton}
+            onPress={(e) => {
+              e.stopPropagation();
+              onRefresh();
+            }}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Text style={[styles.refreshIcon, { color: suitColors.text }]}>↻</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.content}>
@@ -59,6 +72,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 16,
   },
   suitLabel: {
@@ -66,6 +82,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.2,
     opacity: 0.7,
+  },
+  refreshButton: {
+    padding: 4,
+  },
+  refreshIcon: {
+    fontSize: 24,
+    fontWeight: '700',
   },
   content: {
     flex: 1,
