@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Contrapose",
-    "slug": "contrapose",
+    "slug": "rephrase",
     "version": "1.0.0",
     "main": "index.ts",
     "orientation": "portrait",
