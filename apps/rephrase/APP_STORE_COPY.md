@@ -1,12 +1,12 @@
-# App Store Copy for Rephrase
+# App Store Copy for Contrapose
 
 ## App Name
-**Rephrase**
+**Contrapose**
 
 ---
 
 ## iOS Subtitle (30 characters max)
-**Piano Practice Prompts**
+**Practice at New Angles**
 
 ---
 
@@ -17,7 +17,7 @@ Creative constraints for focused piano practice and improvisation.
 
 ## Full Description (4000 characters max - both platforms)
 
-Break through practice plateaus and creative blocks with Rephrase—your pocket-sized practice coach for piano.
+Break through practice plateaus and creative blocks with Contrapose—your pocket-sized practice coach for piano.
 
 **TWO PRACTICE MODES**
 
@@ -58,7 +58,7 @@ Each combination creates a unique creative challenge—perfect for warming up, c
 
 **PHILOSOPHY**
 
-Rephrase is built on the idea that constraints unlock creativity. By focusing your attention on one specific aspect of playing, you develop deeper awareness and break habitual patterns. Whether you're working on a sonata or improvising freely, these prompts help you practice with intention.
+Contrapose is built on the idea that constraints unlock creativity. By focusing your attention on one specific aspect of playing, you develop deeper awareness and break habitual patterns. Whether you're working on a sonata or improvising freely, these prompts help you practice with intention.
 
 No subscriptions. No ads. No distractions. Just thoughtful prompts to guide your practice.
 
@@ -102,12 +102,12 @@ We'd love to hear your feedback! Use the "Request a Card" feature in the Library
 
 ## Support & Marketing URLs
 
-**Support URL:** https://studiodemby.com/rephrase/support
-(Or: https://github.com/yourusername/rephrase if you prefer)
+**Support URL:** https://studiodemby.com/contrapose/support
+(Or: https://github.com/yourusername/contrapose if you prefer)
 
-**Marketing URL (optional):** https://studiodemby.com/rephrase
+**Marketing URL (optional):** https://studiodemby.com/contrapose
 
-**Privacy Policy URL:** https://studiodemby.com/rephrase/privacy
+**Privacy Policy URL:** https://studiodemby.com/contrapose/privacy
 (You'll need to host PRIVACY.md here)
 
 ---

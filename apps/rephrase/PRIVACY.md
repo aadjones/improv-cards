@@ -1,15 +1,15 @@
-# Privacy Policy for Rephrase
+# Privacy Policy for Contrapose
 
 **Effective Date:** October 6, 2025
 **Last Updated:** October 6, 2025
 
-Studio Demby ("we," "our," or "us") operates the Rephrase mobile application (the "App"). This Privacy Policy explains our practices regarding data collection and use.
+Studio Demby ("we," "our," or "us") operates the Contrapose mobile application (the "App"). This Privacy Policy explains our practices regarding data collection and use.
 
 ## Data Collection
 
 **We do not collect, store, or transmit any personal information.**
 
-The Rephrase app:
+The Contrapose app:
 - **Does not require account creation** or login
 - **Does not collect names, email addresses, or contact information**
 - **Does not track your location**
@@ -57,4 +57,4 @@ If you have questions about this Privacy Policy, please contact us at:
 
 ---
 
-**Summary:** Rephrase is a privacy-first app. We don't collect your data, period.
+**Summary:** Contrapose is a privacy-first app. We don't collect your data, period.
