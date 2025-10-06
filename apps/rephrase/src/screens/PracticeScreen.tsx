@@ -92,7 +92,7 @@ export default function PracticeScreen() {
       setError(null);
       const improvCards = getImprovDeck();
       const moodCards = improvCards.filter(c => c.suit === 'mood');
-      const newMood = drawRandomCard(moodCards);
+      const newMood = drawRandomCard(moodCards, drawnMood?.id);
       setDrawnMood(newMood);
     } catch (err) {
       console.error('Error rerolling mood:', err);
@@ -105,7 +105,7 @@ export default function PracticeScreen() {
       setError(null);
       const improvCards = getImprovDeck();
       const technicalCards = improvCards.filter(c => c.suit !== 'mood');
-      const newCard = drawRandomCard(technicalCards);
+      const newCard = drawRandomCard(technicalCards, drawnCard?.id);
       setDrawnCard(newCard);
     } catch (err) {
       console.error('Error rerolling technical card:', err);

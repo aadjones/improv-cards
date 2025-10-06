@@ -5,12 +5,21 @@ import { DrawEvent, Deck } from '@core/types';
 /**
  * Draw a random card from a deck (for improv mode)
  */
-export function drawRandomCard(cards: Card[]): Card {
+export function drawRandomCard(cards: Card[], excludeCardId?: string): Card {
   if (cards.length === 0) {
     throw new Error('No cards available to draw');
   }
-  const randomIndex = Math.floor(Math.random() * cards.length);
-  return cards[randomIndex];
+
+  // Filter out the current card if we want a different one
+  const availableCards = excludeCardId
+    ? cards.filter(card => card.id !== excludeCardId)
+    : cards;
+
+  // If we filtered down to nothing, just use all cards (edge case)
+  const cardsToDrawFrom = availableCards.length > 0 ? availableCards : cards;
+
+  const randomIndex = Math.floor(Math.random() * cardsToDrawFrom.length);
+  return cardsToDrawFrom[randomIndex];
 }
 
 /**
