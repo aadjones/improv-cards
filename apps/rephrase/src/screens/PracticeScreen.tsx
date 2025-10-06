@@ -50,13 +50,22 @@ export default function PracticeScreen() {
       let mood: CardType | null = null;
 
       if (mode === 'practice') {
-        // Biased draw for practice mode
+        // Biased draw for practice mode - exclude current card
         const history = await practiceStore.getHistory();
         const deck = {
           suits: ['physical', 'listening', 'tempo', 'expression', 'instrument'],
           cards: getPracticeDeck(),
         };
         card = drawPracticeCard(deck, history);
+
+        // If we got the same card and there are other cards available, try again
+        if (drawnCard && card.id === drawnCard.id && deck.cards.length > 1) {
+          const filteredDeck = {
+            ...deck,
+            cards: deck.cards.filter(c => c.id !== drawnCard.id),
+          };
+          card = drawPracticeCard(filteredDeck, history);
+        }
 
         // Save to history
         await practiceStore.append({
@@ -65,16 +74,16 @@ export default function PracticeScreen() {
           timestamp: Date.now(),
         });
       } else {
-        // Random draw for improv mode: always draw mood + technical card
+        // Random draw for improv mode: always draw mood + technical card (both different from current)
         const improvCards = getImprovDeck();
 
-        // Draw mood card
+        // Draw mood card (exclude current mood)
         const moodCards = improvCards.filter(c => c.suit === 'mood');
-        mood = drawRandomCard(moodCards);
+        mood = drawRandomCard(moodCards, drawnMood?.id);
 
-        // Draw technical card (non-mood)
+        // Draw technical card (non-mood, exclude current card)
         const technicalCards = improvCards.filter(c => c.suit !== 'mood');
-        card = drawRandomCard(technicalCards);
+        card = drawRandomCard(technicalCards, drawnCard?.id);
       }
 
       setDrawnCard(card);
