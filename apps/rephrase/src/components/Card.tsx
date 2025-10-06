@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card as CardType } from '@core/types';
-import { SUIT_COLORS } from '../data/cards';
+import { SUIT_COLORS, SUIT_INFO } from '../data/cards';
 
 interface CardProps {
   card: CardType;
@@ -12,6 +12,7 @@ interface CardProps {
 
 export function Card({ card, onPress, onRefresh, style }: CardProps) {
   const suitColors = SUIT_COLORS[card.suit] || SUIT_COLORS.custom;
+  const suitInfo = SUIT_INFO[card.suit];
 
   const containerStyle = [
     styles.container,
@@ -25,9 +26,12 @@ export function Card({ card, onPress, onRefresh, style }: CardProps) {
   return (
     <TouchableOpacity style={containerStyle} onPress={onPress} activeOpacity={0.8}>
       <View style={styles.header}>
-        <Text style={[styles.suitLabel, { color: suitColors.text }]}>
-          {card.suit.toUpperCase()}
-        </Text>
+        <View style={styles.suitLabelContainer}>
+          {suitInfo && <Text style={styles.suitEmoji}>{suitInfo.emoji}</Text>}
+          <Text style={[styles.suitLabel, { color: suitColors.text }]}>
+            {suitInfo ? suitInfo.displayName.toUpperCase() : card.suit.toUpperCase()}
+          </Text>
+        </View>
         {onRefresh && (
           <TouchableOpacity
             style={styles.refreshButton}
@@ -56,8 +60,8 @@ const styles = StyleSheet.create({
   container: {
     borderRadius: 16,
     borderWidth: 3,
-    padding: 24,
-    minHeight: 180,
+    padding: 20,
+    minHeight: 160,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -66,14 +70,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    marginVertical: 16,
+    marginVertical: 8,
     marginHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
+  },
+  suitLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  suitEmoji: {
+    fontSize: 14,
   },
   suitLabel: {
     fontSize: 11,

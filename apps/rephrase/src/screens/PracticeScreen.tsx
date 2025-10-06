@@ -13,7 +13,7 @@ import { Card } from '../components/Card';
 import { ModeSwitch } from '../components/ModeSwitch';
 import { usePractice } from '../context/PracticeContext';
 import { drawPracticeCard, drawRandomCard } from '../utils/drawing';
-import { getPracticeDeck, getImprovDeck } from '../data/cards';
+import { getPracticeDeck, getImprovDeck, SUIT_INFO } from '../data/cards';
 import { practiceStore } from '../store/practiceStore';
 
 export default function PracticeScreen() {
@@ -22,28 +22,7 @@ export default function PracticeScreen() {
   const [drawnCard, setDrawnCard] = useState<CardType | null>(null);
   const [drawnMood, setDrawnMood] = useState<CardType | null>(null); // For improv mood banner
   const [isDrawing, setIsDrawing] = useState(false);
-
-  // Example cards for empty state
-  const [examplePracticeCard, setExamplePracticeCard] = useState<CardType | null>(null);
-  const [exampleImprovCard, setExampleImprovCard] = useState<CardType | null>(null);
-  const [exampleMood, setExampleMood] = useState<CardType | null>(null);
-
-  // Set random example cards on mount
-  useEffect(() => {
-    const practiceDeck = getPracticeDeck();
-    const improvDeck = getImprovDeck();
-
-    const randomPractice = drawRandomCard(practiceDeck);
-    setExamplePracticeCard(randomPractice);
-
-    const moodCards = improvDeck.filter(c => c.suit === 'mood');
-    const randomMood = drawRandomCard(moodCards);
-    setExampleMood(randomMood);
-
-    const technicalCards = improvDeck.filter(c => c.suit !== 'mood');
-    const randomImprov = drawRandomCard(technicalCards);
-    setExampleImprovCard(randomImprov);
-  }, []);
+  const [error, setError] = useState<string | null>(null);
 
   // Load preselected cards when screen is focused
   useEffect(() => {
@@ -59,11 +38,13 @@ export default function PracticeScreen() {
     if (!preselectedCard && !preselectedMood) {
       setDrawnCard(null);
       setDrawnMood(null);
+      setError(null);
     }
   }, [mode, preselectedCard, preselectedMood]);
 
   const handleDraw = async () => {
     setIsDrawing(true);
+    setError(null);
     try {
       let card: CardType;
       let mood: CardType | null = null;
@@ -98,28 +79,38 @@ export default function PracticeScreen() {
 
       setDrawnCard(card);
       setDrawnMood(mood);
-    } catch (error) {
-      console.error('Error drawing card:', error);
-      // TODO: Show error to user
+    } catch (err) {
+      console.error('Error drawing card:', err);
+      setError(err instanceof Error ? err.message : 'Unable to draw a card. Please try again.');
     } finally {
       setIsDrawing(false);
     }
   };
 
   const handleRerollMood = async () => {
-    // Redraw only the mood
-    const improvCards = getImprovDeck();
-    const moodCards = improvCards.filter(c => c.suit === 'mood');
-    const newMood = drawRandomCard(moodCards);
-    setDrawnMood(newMood);
+    try {
+      setError(null);
+      const improvCards = getImprovDeck();
+      const moodCards = improvCards.filter(c => c.suit === 'mood');
+      const newMood = drawRandomCard(moodCards);
+      setDrawnMood(newMood);
+    } catch (err) {
+      console.error('Error rerolling mood:', err);
+      setError(err instanceof Error ? err.message : 'Unable to redraw mood. Please try again.');
+    }
   };
 
   const handleRerollTechnical = async () => {
-    // Redraw only the technical card
-    const improvCards = getImprovDeck();
-    const technicalCards = improvCards.filter(c => c.suit !== 'mood');
-    const newCard = drawRandomCard(technicalCards);
-    setDrawnCard(newCard);
+    try {
+      setError(null);
+      const improvCards = getImprovDeck();
+      const technicalCards = improvCards.filter(c => c.suit !== 'mood');
+      const newCard = drawRandomCard(technicalCards);
+      setDrawnCard(newCard);
+    } catch (err) {
+      console.error('Error rerolling technical card:', err);
+      setError(err instanceof Error ? err.message : 'Unable to redraw card. Please try again.');
+    }
   };
 
   return (
@@ -131,42 +122,19 @@ export default function PracticeScreen() {
         {/* Subtitle */}
         <Text style={styles.subtitle}>Creative constraints for focused piano practice</Text>
 
+        {/* Error Message */}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+            <TouchableOpacity onPress={() => setError(null)} style={styles.dismissButton}>
+              <Text style={styles.dismissText}>Dismiss</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Draw Button or Card */}
         {!drawnCard ? (
           <View style={styles.drawSection}>
-            {/* Example Cards Preview */}
-            {mode === 'practice' && examplePracticeCard && (
-              <View style={styles.exampleContainer}>
-                <View style={[styles.exampleCard, { opacity: 0.3 }]}>
-                  <Text style={styles.exampleSuit}>{examplePracticeCard.suit.toUpperCase()}</Text>
-                  <Text style={styles.exampleTitle}>{examplePracticeCard.title}</Text>
-                  {examplePracticeCard.description && (
-                    <Text style={styles.exampleDescription}>{examplePracticeCard.description}</Text>
-                  )}
-                </View>
-                <Text style={styles.exampleLabel}>Example prompt</Text>
-              </View>
-            )}
-            {mode === 'improv' && exampleMood && exampleImprovCard && (
-              <View style={styles.exampleContainer}>
-                <View style={[styles.exampleMoodBanner, { opacity: 0.3 }]}>
-                  <Text style={styles.exampleMoodLabel}>MOOD</Text>
-                  <Text style={styles.exampleMoodTitle}>{exampleMood.title}</Text>
-                  {exampleMood.description && (
-                    <Text style={styles.exampleMoodDescription}>{exampleMood.description}</Text>
-                  )}
-                </View>
-                <View style={[styles.exampleCard, { opacity: 0.3 }]}>
-                  <Text style={styles.exampleSuit}>{exampleImprovCard.suit.toUpperCase()}</Text>
-                  <Text style={styles.exampleTitle}>{exampleImprovCard.title}</Text>
-                  {exampleImprovCard.description && (
-                    <Text style={styles.exampleDescription}>{exampleImprovCard.description}</Text>
-                  )}
-                </View>
-                <Text style={styles.exampleLabel}>Example cards</Text>
-              </View>
-            )}
-
             <TouchableOpacity
               style={[styles.drawButton, isDrawing && styles.drawButtonDisabled]}
               onPress={handleDraw}
@@ -183,7 +151,7 @@ export default function PracticeScreen() {
             <Text style={styles.hint}>
               {mode === 'practice'
                 ? 'Draw a mindful prompt to focus your practice session'
-                : 'Get a mood + constraint to spark creative improvisation'}
+                : 'Get a mood and a constraint to spark creative improvisation'}
             </Text>
           </View>
         ) : (
@@ -192,7 +160,12 @@ export default function PracticeScreen() {
             {drawnMood && (
               <View style={styles.moodBanner}>
                 <View style={styles.bannerHeader}>
-                  <Text style={styles.moodLabel}>MOOD</Text>
+                  <View style={styles.moodLabelContainer}>
+                    {SUIT_INFO[drawnMood.suit] && (
+                      <Text style={styles.moodEmoji}>{SUIT_INFO[drawnMood.suit].emoji}</Text>
+                    )}
+                    <Text style={styles.moodLabel}>MOOD</Text>
+                  </View>
                   <TouchableOpacity
                     style={styles.refreshButton}
                     onPress={handleRerollMood}
@@ -261,6 +234,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
   },
+  moodLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  moodEmoji: {
+    fontSize: 14,
+  },
   moodLabel: {
     fontSize: 11,
     fontWeight: '700',
@@ -293,72 +274,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 60,
     paddingHorizontal: 20,
-  },
-  exampleContainer: {
-    width: '100%',
-    maxWidth: 350,
-    marginBottom: 32,
-    alignItems: 'center',
-  },
-  exampleMoodBanner: {
-    width: '100%',
-    backgroundColor: '#FCE7F3',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderLeftWidth: 4,
-    borderLeftColor: '#BE185D',
-  },
-  exampleMoodLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    color: '#9F1239',
-    marginBottom: 6,
-  },
-  exampleMoodTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#9F1239',
-    marginBottom: 4,
-  },
-  exampleMoodDescription: {
-    fontSize: 14,
-    color: '#9F1239',
-    opacity: 0.85,
-    lineHeight: 20,
-  },
-  exampleCard: {
-    width: '100%',
-    backgroundColor: '#E9D5FF',
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-    borderColor: '#4C1D95',
-  },
-  exampleSuit: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    color: '#581C87',
-    marginBottom: 8,
-  },
-  exampleTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#581C87',
-    marginBottom: 8,
-  },
-  exampleDescription: {
-    fontSize: 15,
-    color: '#581C87',
-    lineHeight: 22,
-  },
-  exampleLabel: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    marginTop: 8,
-    fontStyle: 'italic',
   },
   drawButton: {
     backgroundColor: '#2563EB',
@@ -413,5 +328,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#2563EB',
+  },
+  errorContainer: {
+    backgroundColor: '#FEE2E2',
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 20,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#DC2626',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#991B1B',
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  dismissButton: {
+    alignSelf: 'flex-start',
+  },
+  dismissText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#DC2626',
   },
 });

@@ -16,9 +16,12 @@ export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {
         onPress={() => onChange('practice')}
         activeOpacity={0.8}
       >
-        <Text style={[styles.buttonText, mode === 'practice' && styles.activeText]}>
-          General Practice
-        </Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.emoji}>🎯</Text>
+          <Text style={[styles.buttonText, mode === 'practice' && styles.activeText]}>
+            General Practice
+          </Text>
+        </View>
         <Text style={[styles.description, mode === 'practice' && styles.activeDescription]}>
           Mindful, focused work
         </Text>
@@ -28,9 +31,12 @@ export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {
         onPress={() => onChange('improv')}
         activeOpacity={0.8}
       >
-        <Text style={[styles.buttonText, mode === 'improv' && styles.activeText]}>
-          Improvisation
-        </Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.emoji}>✨</Text>
+          <Text style={[styles.buttonText, mode === 'improv' && styles.activeText]}>
+            Improvisation
+          </Text>
+        </View>
         <Text style={[styles.description, mode === 'improv' && styles.activeDescription]}>
           Creative exploration
         </Text>
@@ -81,5 +87,15 @@ const styles = StyleSheet.create({
   },
   activeDescription: {
     color: '#6B7280',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emoji: {
+    fontSize: 16,
+    marginRight: 4,
+    lineHeight: 16,
   },
 });

@@ -1,48 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SectionList, TouchableOpacity, Linking } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking } from 'react-native';
 import { Card as CardType } from '@core/types';
 import { Card } from '../components/Card';
-import { CardDetailModal } from '../components/CardDetailModal';
-import { usePractice } from '../context/PracticeContext';
-import { drawRandomCard } from '../utils/drawing';
-import { getCardsByType, getImprovDeck } from '../data/cards';
+import {
+  getCardsBySuit,
+  PRACTICE_SUITS,
+  IMPROV_SUITS,
+  SUIT_INFO,
+  SUIT_COLORS,
+} from '../data/cards';
 
-interface CardSectionData {
-  title: string;
-  data: CardType[];
+interface SuitSectionData {
+  suit: string;
+  typeLabel: string;
 }
 
 export default function LibraryScreen() {
-  const navigation = useNavigation();
-  const { setMode, setPreselectedCards } = usePractice();
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
 
-  // Group cards by type and suit
-  const practiceCards = getCardsByType('practice');
-  const improvCards = getCardsByType('improv');
+  // Create suit sections
+  const practiceSections: SuitSectionData[] = PRACTICE_SUITS.map(suit => ({
+    suit,
+    typeLabel: 'PRACTICE PROMPTS',
+  }));
 
-  const sections: CardSectionData[] = [
-    {
-      title: 'PRACTICE PROMPTS',
-      data: practiceCards,
-    },
-    {
-      title: 'IMPROVISATION CARDS',
-      data: improvCards,
-    },
-  ];
+  const improvSections: SuitSectionData[] = IMPROV_SUITS.map(suit => ({
+    suit,
+    typeLabel: 'IMPROVISATION CARDS',
+  }));
 
-  const renderSectionHeader = ({ section }: { section: CardSectionData }) => (
-    <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>{section.title}</Text>
-      <Text style={styles.sectionCount}>({section.data.length} cards)</Text>
-    </View>
-  );
+  const allSections = [...practiceSections, ...improvSections];
 
-  const renderCard = ({ item }: { item: CardType }) => (
-    <Card card={item} onPress={() => setSelectedCard(item)} style={styles.card} />
-  );
+  const renderCard = ({ item }: { item: CardType }) => <Card card={item} />;
 
   const handleRequestCard = () => {
     const formUrl =
@@ -53,35 +41,6 @@ export default function LibraryScreen() {
   const handleSupport = () => {
     const kofiUrl = 'https://ko-fi.com/studiodemby';
     Linking.openURL(kofiUrl);
-  };
-
-  const handlePracticeThis = (card: CardType) => {
-    const improvDeck = getImprovDeck();
-
-    if (card.type === 'practice') {
-      // Practice card: set mode to practice, show that card
-      setMode('practice');
-      setPreselectedCards(card);
-    } else {
-      // Improv card
-      setMode('improv');
-
-      if (card.suit === 'mood') {
-        // Mood card: draw random technical card
-        const technicalCards = improvDeck.filter(c => c.suit !== 'mood');
-        const randomTechnical = drawRandomCard(technicalCards);
-        setPreselectedCards(randomTechnical, card); // card is mood
-      } else {
-        // Technical card: draw random mood
-        const moodCards = improvDeck.filter(c => c.suit === 'mood');
-        const randomMood = drawRandomCard(moodCards);
-        setPreselectedCards(card, randomMood); // card is technical, second param is mood
-      }
-    }
-
-    // Close modal and navigate to Practice tab
-    setSelectedCard(null);
-    navigation.navigate('Practice' as never);
   };
 
   return (
@@ -106,21 +65,47 @@ export default function LibraryScreen() {
         <Text style={styles.requestButtonSubtext}>Missing something? Suggest a new card!</Text>
       </TouchableOpacity>
 
-      <SectionList
-        sections={sections}
-        renderItem={renderCard}
-        renderSectionHeader={renderSectionHeader}
-        keyExtractor={item => item.id}
-        stickySectionHeadersEnabled={false}
-        contentContainerStyle={styles.listContent}
+      <FlatList
+        data={allSections}
+        keyExtractor={(item, index) => `${item.suit}-${index}`}
         showsVerticalScrollIndicator={false}
-      />
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item: section, index }) => {
+          const cards = getCardsBySuit(section.suit);
+          const suitInfo = SUIT_INFO[section.suit];
+          const suitColors = SUIT_COLORS[section.suit];
 
-      <CardDetailModal
-        card={selectedCard}
-        visible={!!selectedCard}
-        onClose={() => setSelectedCard(null)}
-        onPracticeThis={handlePracticeThis}
+          // Show type label before first suit in each category
+          const showTypeLabel =
+            (index === 0 && section.typeLabel === 'PRACTICE PROMPTS') ||
+            (index === PRACTICE_SUITS.length && section.typeLabel === 'IMPROVISATION CARDS');
+
+          return (
+            <View>
+              {showTypeLabel && (
+                <View style={styles.typeHeader}>
+                  <Text style={styles.typeTitle}>{section.typeLabel}</Text>
+                </View>
+              )}
+
+              <View style={styles.suitSection}>
+                <View style={styles.suitHeader}>
+                  <Text style={[styles.suitTitle, { color: suitColors.text }]}>
+                    {suitInfo.emoji} {suitInfo.displayName}
+                  </Text>
+                  <Text style={styles.cardCount}>({cards.length})</Text>
+                </View>
+
+                <FlatList
+                  data={cards}
+                  renderItem={renderCard}
+                  keyExtractor={card => card.id}
+                  scrollEnabled={false}
+                />
+              </View>
+            </View>
+          );
+        }}
       />
     </View>
   );
@@ -177,28 +162,38 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 40,
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  typeHeader: {
     paddingHorizontal: 20,
     paddingTop: 32,
-    paddingBottom: 12,
+    paddingBottom: 8,
     backgroundColor: '#FFFFFF',
   },
-  sectionTitle: {
+  typeTitle: {
     fontSize: 14,
     fontWeight: '700',
     letterSpacing: 1.2,
     color: '#374151',
   },
-  sectionCount: {
-    fontSize: 14,
-    color: '#9CA3AF',
-    marginLeft: 8,
-    fontWeight: '500',
+  suitSection: {
+    marginBottom: 16,
   },
-  card: {
-    marginHorizontal: 0,
+  suitHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  suitTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginRight: 8,
+  },
+  cardCount: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    fontWeight: '500',
   },
   requestButton: {
     marginHorizontal: 20,

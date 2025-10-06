@@ -475,6 +475,28 @@ export const ALL_CARDS: Card[] = [...PRACTICE_CARDS, ...IMPROV_CARDS];
 export const PRACTICE_SUITS = ['physical', 'listening', 'tempo', 'expression', 'instrument'];
 export const IMPROV_SUITS = ['mood', 'form', 'rhythm', 'pitch', 'position'];
 
+// Suit metadata with icons
+export interface SuitInfo {
+  emoji: string;
+  displayName: string;
+}
+
+export const SUIT_INFO: Record<string, SuitInfo> = {
+  // Practice suits
+  physical: { emoji: '💪', displayName: 'Physical' },
+  listening: { emoji: '👂', displayName: 'Listening' },
+  tempo: { emoji: '⏱️', displayName: 'Tempo' },
+  expression: { emoji: '🎨', displayName: 'Expression' },
+  instrument: { emoji: '🎹', displayName: 'Instrument' },
+
+  // Improv suits
+  mood: { emoji: '🎭', displayName: 'Mood' },
+  form: { emoji: '🏗️', displayName: 'Form' },
+  rhythm: { emoji: '⏳', displayName: 'Rhythm' },
+  pitch: { emoji: '〰️', displayName: 'Pitch' },
+  position: { emoji: '👐', displayName: 'Position' },
+};
+
 // Suit color configuration
 export interface SuitColors {
   background: string;
