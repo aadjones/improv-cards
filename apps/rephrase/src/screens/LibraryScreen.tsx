@@ -6,14 +6,7 @@ import { Card } from '../components/Card';
 import { CardDetailModal } from '../components/CardDetailModal';
 import { usePractice } from '../context/PracticeContext';
 import { drawRandomCard } from '../utils/drawing';
-import {
-  ALL_CARDS,
-  PRACTICE_SUITS,
-  IMPROV_SUITS,
-  getCardsBySuit,
-  getCardsByType,
-  getImprovDeck,
-} from '../data/cards';
+import { getCardsByType, getImprovDeck } from '../data/cards';
 
 interface CardSectionData {
   title: string;
