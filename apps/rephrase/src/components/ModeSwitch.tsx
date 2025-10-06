@@ -19,6 +19,9 @@ export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {
         <Text style={[styles.buttonText, mode === 'practice' && styles.activeText]}>
           General Practice
         </Text>
+        <Text style={[styles.description, mode === 'practice' && styles.activeDescription]}>
+          Mindful, focused work
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, mode === 'improv' && styles.activeButton]}
@@ -27,6 +30,9 @@ export function ModeSwitch({ mode, onChange }: ModeSwitchProps) {
       >
         <Text style={[styles.buttonText, mode === 'improv' && styles.activeText]}>
           Improvisation
+        </Text>
+        <Text style={[styles.description, mode === 'improv' && styles.activeDescription]}>
+          Creative exploration
         </Text>
       </TouchableOpacity>
     </View>
@@ -44,7 +50,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
@@ -67,5 +73,13 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: '#111827',
+  },
+  description: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginTop: 2,
+  },
+  activeDescription: {
+    color: '#6B7280',
   },
 });

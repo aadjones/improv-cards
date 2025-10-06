@@ -159,40 +159,40 @@ export const PRACTICE_CARDS: Card[] = [
     type: 'practice',
   },
 
-  // Instrument cards
+  // Instrument cards (piano-specific)
   {
     id: 'instrument-001',
     suit: 'instrument',
-    title: 'Bow speed vs pressure',
-    description: 'Hold pitch constant; vary speed and pressure separately.',
+    title: 'Pedaling precision',
+    description: 'Practice half-pedal, flutter pedal, and pedal changes on beat vs off beat.',
     type: 'practice',
   },
   {
     id: 'instrument-002',
     suit: 'instrument',
-    title: 'Double-stop resonance',
-    description: 'Find pure 3rds/6ths; adjust until beats vanish.',
+    title: 'Hand independence',
+    description: 'Play polyrhythmic patterns where each hand has different subdivision.',
     type: 'practice',
   },
   {
     id: 'instrument-003',
     suit: 'instrument',
-    title: 'Vibrato choices',
-    description: 'Play same phrase with no vibrato, narrow vibrato, wide vibrato.',
+    title: 'Voicing balance',
+    description: 'In chords, bring out different voices - top, bottom, inner notes.',
     type: 'practice',
   },
   {
     id: 'instrument-004',
     suit: 'instrument',
-    title: 'Sul ponticello/ordinario',
-    description: 'Explore bow positions from bridge to fingerboard.',
+    title: 'Touch variety',
+    description: 'Play same passage with different attacks: staccato, legato, portato.',
     type: 'practice',
   },
   {
     id: 'instrument-005',
     suit: 'instrument',
-    title: 'Finger pressure minimum',
-    description: 'Use just enough left hand pressure to create clean sound.',
+    title: 'Chord voicing exploration',
+    description: 'Rearrange chord notes across registers and inversions.',
     type: 'practice',
   },
 ];

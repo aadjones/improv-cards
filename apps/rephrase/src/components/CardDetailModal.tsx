@@ -7,9 +7,10 @@ interface CardDetailModalProps {
   card: CardType | null;
   visible: boolean;
   onClose: () => void;
+  onPracticeThis?: (card: CardType) => void;
 }
 
-export function CardDetailModal({ card, visible, onClose }: CardDetailModalProps) {
+export function CardDetailModal({ card, visible, onClose, onPracticeThis }: CardDetailModalProps) {
   if (!card) return null;
 
   const suitColors = SUIT_COLORS[card.suit] || SUIT_COLORS.custom;
@@ -30,18 +31,25 @@ export function CardDetailModal({ card, visible, onClose }: CardDetailModalProps
             </Text>
 
             {/* Description */}
-            {card.description && (
-              <Text style={styles.description}>{card.description}</Text>
-            )}
+            {card.description && <Text style={styles.description}>{card.description}</Text>}
           </ScrollView>
 
           {/* Actions */}
           <View style={styles.actions}>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: suitColors.border }]}
-              onPress={onClose}
-            >
-              <Text style={styles.buttonText}>Close</Text>
+            {onPracticeThis && (
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  styles.primaryButton,
+                  { backgroundColor: suitColors.border },
+                ]}
+                onPress={() => onPracticeThis(card)}
+              >
+                <Text style={styles.buttonText}>Practice This</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={onClose}>
+              <Text style={[styles.buttonText, styles.secondaryButtonText]}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -94,15 +102,25 @@ const styles = StyleSheet.create({
   actions: {
     padding: 24,
     paddingTop: 0,
+    gap: 12,
   },
   button: {
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
+  primaryButton: {
+    // backgroundColor set dynamically
+  },
+  secondaryButton: {
+    backgroundColor: '#F3F4F6',
+  },
   buttonText: {
     color: '#ffffff',
     fontSize: 17,
     fontWeight: '600',
+  },
+  secondaryButtonText: {
+    color: '#374151',
   },
 });

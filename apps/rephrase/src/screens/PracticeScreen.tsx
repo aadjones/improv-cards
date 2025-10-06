@@ -7,28 +7,60 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+import { useIsFocused } from '@react-navigation/native';
 import { Card as CardType } from '@core/types';
 import { Card } from '../components/Card';
-import { CardDetailModal } from '../components/CardDetailModal';
 import { ModeSwitch } from '../components/ModeSwitch';
+import { usePractice } from '../context/PracticeContext';
 import { drawPracticeCard, drawRandomCard } from '../utils/drawing';
 import { getPracticeDeck, getImprovDeck } from '../data/cards';
 import { practiceStore } from '../store/practiceStore';
 
-type Mode = 'practice' | 'improv';
-
 export default function PracticeScreen() {
-  const [mode, setMode] = useState<Mode>('practice');
+  const isFocused = useIsFocused();
+  const { mode, setMode, preselectedCard, preselectedMood, clearPreselectedCards } = usePractice();
   const [drawnCard, setDrawnCard] = useState<CardType | null>(null);
   const [drawnMood, setDrawnMood] = useState<CardType | null>(null); // For improv mood banner
-  const [selectedCard, setSelectedCard] = useState<CardType | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
 
-  // Clear drawn cards when switching modes
+  // Example cards for empty state
+  const [examplePracticeCard, setExamplePracticeCard] = useState<CardType | null>(null);
+  const [exampleImprovCard, setExampleImprovCard] = useState<CardType | null>(null);
+  const [exampleMood, setExampleMood] = useState<CardType | null>(null);
+
+  // Set random example cards on mount
   useEffect(() => {
-    setDrawnCard(null);
-    setDrawnMood(null);
-  }, [mode]);
+    const practiceDeck = getPracticeDeck();
+    const improvDeck = getImprovDeck();
+
+    const randomPractice = drawRandomCard(practiceDeck);
+    setExamplePracticeCard(randomPractice);
+
+    const moodCards = improvDeck.filter(c => c.suit === 'mood');
+    const randomMood = drawRandomCard(moodCards);
+    setExampleMood(randomMood);
+
+    const technicalCards = improvDeck.filter(c => c.suit !== 'mood');
+    const randomImprov = drawRandomCard(technicalCards);
+    setExampleImprovCard(randomImprov);
+  }, []);
+
+  // Load preselected cards when screen is focused
+  useEffect(() => {
+    if (isFocused && (preselectedCard || preselectedMood)) {
+      setDrawnCard(preselectedCard);
+      setDrawnMood(preselectedMood);
+      clearPreselectedCards();
+    }
+  }, [isFocused, preselectedCard, preselectedMood, clearPreselectedCards]);
+
+  // Clear drawn cards when switching modes (but not if we have preselected cards)
+  useEffect(() => {
+    if (!preselectedCard && !preselectedMood) {
+      setDrawnCard(null);
+      setDrawnMood(null);
+    }
+  }, [mode, preselectedCard, preselectedMood]);
 
   const handleDraw = async () => {
     setIsDrawing(true);
@@ -90,23 +122,51 @@ export default function PracticeScreen() {
     setDrawnCard(newCard);
   };
 
-  const handleCardPress = (card: CardType) => {
-    setSelectedCard(card);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedCard(null);
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Mode Switcher */}
         <ModeSwitch mode={mode} onChange={setMode} />
 
+        {/* Subtitle */}
+        <Text style={styles.subtitle}>Creative constraints for focused piano practice</Text>
+
         {/* Draw Button or Card */}
         {!drawnCard ? (
           <View style={styles.drawSection}>
+            {/* Example Cards Preview */}
+            {mode === 'practice' && examplePracticeCard && (
+              <View style={styles.exampleContainer}>
+                <View style={[styles.exampleCard, { opacity: 0.3 }]}>
+                  <Text style={styles.exampleSuit}>{examplePracticeCard.suit.toUpperCase()}</Text>
+                  <Text style={styles.exampleTitle}>{examplePracticeCard.title}</Text>
+                  {examplePracticeCard.description && (
+                    <Text style={styles.exampleDescription}>{examplePracticeCard.description}</Text>
+                  )}
+                </View>
+                <Text style={styles.exampleLabel}>Example prompt</Text>
+              </View>
+            )}
+            {mode === 'improv' && exampleMood && exampleImprovCard && (
+              <View style={styles.exampleContainer}>
+                <View style={[styles.exampleMoodBanner, { opacity: 0.3 }]}>
+                  <Text style={styles.exampleMoodLabel}>MOOD</Text>
+                  <Text style={styles.exampleMoodTitle}>{exampleMood.title}</Text>
+                  {exampleMood.description && (
+                    <Text style={styles.exampleMoodDescription}>{exampleMood.description}</Text>
+                  )}
+                </View>
+                <View style={[styles.exampleCard, { opacity: 0.3 }]}>
+                  <Text style={styles.exampleSuit}>{exampleImprovCard.suit.toUpperCase()}</Text>
+                  <Text style={styles.exampleTitle}>{exampleImprovCard.title}</Text>
+                  {exampleImprovCard.description && (
+                    <Text style={styles.exampleDescription}>{exampleImprovCard.description}</Text>
+                  )}
+                </View>
+                <Text style={styles.exampleLabel}>Example cards</Text>
+              </View>
+            )}
+
             <TouchableOpacity
               style={[styles.drawButton, isDrawing && styles.drawButtonDisabled]}
               onPress={handleDraw}
@@ -122,8 +182,8 @@ export default function PracticeScreen() {
             </TouchableOpacity>
             <Text style={styles.hint}>
               {mode === 'practice'
-                ? 'Get a focused practice prompt to guide your attention'
-                : 'Draw a creative constraint for improvisation'}
+                ? 'Draw a mindful prompt to focus your practice session'
+                : 'Get a mood + constraint to spark creative improvisation'}
             </Text>
           </View>
         ) : (
@@ -151,7 +211,6 @@ export default function PracticeScreen() {
             {/* Main Card */}
             <Card
               card={drawnCard}
-              onPress={() => handleCardPress(drawnCard)}
               onRefresh={mode === 'improv' ? handleRerollTechnical : undefined}
             />
 
@@ -162,15 +221,16 @@ export default function PracticeScreen() {
               disabled={isDrawing}
             >
               <Text style={styles.drawAgainText}>
-                {isDrawing ? 'Drawing...' : 'Draw New Cards'}
+                {isDrawing
+                  ? 'Drawing...'
+                  : mode === 'improv'
+                    ? 'Draw New Cards'
+                    : 'Draw New Prompt'}
               </Text>
             </TouchableOpacity>
           </View>
         )}
       </ScrollView>
-
-      {/* Card Detail Modal */}
-      <CardDetailModal card={selectedCard} visible={!!selectedCard} onClose={handleCloseModal} />
     </View>
   );
 }
@@ -234,6 +294,72 @@ const styles = StyleSheet.create({
     paddingVertical: 60,
     paddingHorizontal: 20,
   },
+  exampleContainer: {
+    width: '100%',
+    maxWidth: 350,
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  exampleMoodBanner: {
+    width: '100%',
+    backgroundColor: '#FCE7F3',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#BE185D',
+  },
+  exampleMoodLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    color: '#9F1239',
+    marginBottom: 6,
+  },
+  exampleMoodTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#9F1239',
+    marginBottom: 4,
+  },
+  exampleMoodDescription: {
+    fontSize: 14,
+    color: '#9F1239',
+    opacity: 0.85,
+    lineHeight: 20,
+  },
+  exampleCard: {
+    width: '100%',
+    backgroundColor: '#E9D5FF',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 2,
+    borderColor: '#4C1D95',
+  },
+  exampleSuit: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    color: '#581C87',
+    marginBottom: 8,
+  },
+  exampleTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#581C87',
+    marginBottom: 8,
+  },
+  exampleDescription: {
+    fontSize: 15,
+    color: '#581C87',
+    lineHeight: 22,
+  },
+  exampleLabel: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginTop: 8,
+    fontStyle: 'italic',
+  },
   drawButton: {
     backgroundColor: '#2563EB',
     paddingHorizontal: 32,
@@ -257,6 +383,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
+  },
+  subtitle: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   hint: {
     marginTop: 16,

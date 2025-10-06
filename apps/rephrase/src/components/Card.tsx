@@ -31,7 +31,7 @@ export function Card({ card, onPress, onRefresh, style }: CardProps) {
         {onRefresh && (
           <TouchableOpacity
             style={styles.refreshButton}
-            onPress={(e) => {
+            onPress={e => {
               e.stopPropagation();
               onRefresh();
             }}
@@ -45,9 +45,7 @@ export function Card({ card, onPress, onRefresh, style }: CardProps) {
       <View style={styles.content}>
         <Text style={[styles.title, { color: suitColors.text }]}>{card.title}</Text>
         {card.description && (
-          <Text style={[styles.description, { color: suitColors.text }]}>
-            {card.description}
-          </Text>
+          <Text style={[styles.description, { color: suitColors.text }]}>{card.description}</Text>
         )}
       </View>
     </TouchableOpacity>
