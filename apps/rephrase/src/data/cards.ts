@@ -37,7 +37,7 @@ export const PRACTICE_CARDS: Card[] = [
     id: 'physical-004',
     suit: 'physical',
     title: 'Breath rhythm alignment',
-    description: 'Match your breathing pattern to the musical pulse.',
+    description: 'Match your breathing pattern to the musical phrasing.',
     type: 'practice',
   },
   {
@@ -60,21 +60,21 @@ export const PRACTICE_CARDS: Card[] = [
     id: 'listening-002',
     suit: 'listening',
     title: 'Room acoustics',
-    description: 'Play the same phrase in different parts of the room.',
+    description: 'Experiment with opening the lid or front cover of the piano.',
     type: 'practice',
   },
   {
     id: 'listening-003',
     suit: 'listening',
     title: 'Overtone awareness',
-    description: 'Listen for the partials above each fundamental.',
+    description: 'Listen for the partials and beat patterns above each fundamental.',
     type: 'practice',
   },
   {
     id: 'listening-004',
     suit: 'listening',
     title: 'Eyes closed focus',
-    description: 'Play a familiar passage with eyes closed, notice what changes.',
+    description: 'Play a familiar passage with eyes closed; notice what changes.',
     type: 'practice',
   },
   {
@@ -89,8 +89,8 @@ export const PRACTICE_CARDS: Card[] = [
   {
     id: 'tempo-001',
     suit: 'tempo',
-    title: 'Clap then play',
-    description: 'Clap the rhythm first, then play with same precision.',
+    title: 'Tap then play',
+    description: 'Tap the rhythm first, then play with same precision.',
     type: 'practice',
   },
   {
@@ -111,7 +111,7 @@ export const PRACTICE_CARDS: Card[] = [
     id: 'tempo-004',
     suit: 'tempo',
     title: 'Extreme slow practice',
-    description: 'Play at 25% tempo, maintaining musical intention.',
+    description: 'Play at 50% tempo or slower, maintaining musical intention.',
     type: 'practice',
   },
   {
@@ -164,7 +164,8 @@ export const PRACTICE_CARDS: Card[] = [
     id: 'instrument-001',
     suit: 'instrument',
     title: 'Pedaling precision',
-    description: 'Practice half-pedal, flutter pedal, and pedal changes on beat vs off beat.',
+    description:
+      'Experiment with half-pedal, flutter pedal, and pedal changes on beat vs off beat.',
     type: 'practice',
   },
   {
@@ -256,7 +257,7 @@ export const IMPROV_CARDS: Card[] = [
     id: 'personal',
     title: 'Personal',
     suit: 'mood',
-    description: 'Express something deeply personal through your playing.',
+    description: 'Express your current mood with your playing.',
     type: 'improv',
   },
 
@@ -410,7 +411,7 @@ export const IMPROV_CARDS: Card[] = [
     id: 'clusters',
     title: 'Clusters',
     suit: 'pitch',
-    description: 'Use close intervals played together (tone clusters).',
+    description: 'Use close intervals played together as a motif.',
     type: 'improv',
   },
 
@@ -426,14 +427,15 @@ export const IMPROV_CARDS: Card[] = [
     id: 'thumb-pinkie',
     title: 'Thumb and pinkie',
     suit: 'position',
-    description: 'Use only your thumb and pinkie fingers.',
+    description: 'Bring out the outer voices using your thumb and pinkie fingers.',
     type: 'improv',
   },
   {
     id: 'crossover',
     title: 'Crossover',
     suit: 'position',
-    description: 'Cross your hands over each other while playing.',
+    description:
+      'Create a three-layer texture by crossing your hands over each other while playing.',
     type: 'improv',
   },
   {
