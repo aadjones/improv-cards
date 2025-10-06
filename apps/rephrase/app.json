@@ -10,22 +10,32 @@
     "splash": {
       "image": "./assets/icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F6F0E5"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourco.rephrase"
+      "bundleIdentifier": "com.studiodemby.rephrase",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yourco.rephrase"
+      "package": "com.studiodemby.rephrase"
     },
     "web": {
       "favicon": "./assets/favicon.ico"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7b39a555-9355-4757-b1d5-33c3e20297d5"
+      }
     }
   }
 }
