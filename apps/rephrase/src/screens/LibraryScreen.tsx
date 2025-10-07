@@ -38,26 +38,12 @@ export default function LibraryScreen() {
     Linking.openURL(formUrl);
   };
 
-  const handleSupport = () => {
-    const kofiUrl = 'https://ko-fi.com/studiodemby';
-    Linking.openURL(kofiUrl);
-  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <View>
-            <Text style={styles.headerTitle}>Library</Text>
-            <Text style={styles.headerSubtitle}>Browse all cards</Text>
-          </View>
-          <View style={styles.supportContainer}>
-            <Text style={styles.supportLabel}>Like this app?</Text>
-            <TouchableOpacity style={styles.supportButton} onPress={handleSupport}>
-              <Text style={styles.supportButtonText}>☕ Support</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Text style={styles.headerTitle}>Library</Text>
+        <Text style={styles.headerSubtitle}>Browse all cards</Text>
       </View>
 
       <TouchableOpacity style={styles.requestButton} onPress={handleRequestCard}>
@@ -123,11 +109,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
   headerTitle: {
     fontSize: 32,
     fontWeight: '700',
@@ -137,27 +118,6 @@ const styles = StyleSheet.create({
   headerSubtitle: {
     fontSize: 16,
     color: '#6B7280',
-  },
-  supportContainer: {
-    alignItems: 'flex-end',
-  },
-  supportLabel: {
-    fontSize: 11,
-    color: '#6B7280',
-    marginBottom: 4,
-  },
-  supportButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FDE68A',
-  },
-  supportButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#92400E',
   },
   listContent: {
     paddingBottom: 40,
