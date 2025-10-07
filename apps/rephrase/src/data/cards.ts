@@ -1,7 +1,7 @@
 import { Card } from '@core/types';
 
 /**
- * Unified card dataset for Rephrase app
+ * Unified card dataset for Contrapose app
  * - Practice cards (type: 'practice') renamed "time" → "tempo"
  * - Improv cards (type: 'improv') renamed "time" → "rhythm"
  */
@@ -186,7 +186,7 @@ export const PRACTICE_CARDS: Card[] = [
     id: 'instrument-004',
     suit: 'instrument',
     title: 'Touch variety',
-    description: 'Play same passage with different attacks: staccato, legato, portato.',
+    description: 'Play same passage with different attacks: staccato, legato, etc.',
     type: 'practice',
   },
   {

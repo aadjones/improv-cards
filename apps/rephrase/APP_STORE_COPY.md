@@ -1,16 +1,19 @@
 # App Store Copy for Contrapose
 
 ## App Name
+
 **Contrapose**
 
 ---
 
 ## iOS Subtitle (30 characters max)
+
 **Practice at New Angles**
 
 ---
 
 ## Short Description (80 characters - Android only)
+
 Creative constraints for focused piano practice and improvisation.
 
 ---
@@ -65,11 +68,13 @@ No subscriptions. No ads. No distractions. Just thoughtful prompts to guide your
 ---
 
 ## Keywords (100 characters max - iOS only)
+
 piano,practice,music,improvisation,teacher,lesson,creative,constraint,musician,jazz
 
 ---
 
 ## Promotional Text (170 characters - iOS only, optional)
+
 73 creative practice prompts designed to break habitual patterns and deepen musical awareness. Two modes: focused practice + free improvisation.
 
 ---
@@ -78,7 +83,7 @@ piano,practice,music,improvisation,teacher,lesson,creative,constraint,musician,j
 
 **Version 1.0 - Initial Release**
 
-Welcome to Rephrase! This is our initial launch with:
+Welcome to Contrapose! This is our initial launch with:
 • 25 practice prompts across 5 skill areas
 • 48 improvisation cards across 5 creative dimensions
 • Intelligent practice card rotation
@@ -96,6 +101,7 @@ We'd love to hear your feedback! Use the "Request a Card" feature in the Library
 ---
 
 ## Content Rating
+
 4+ (No objectionable content)
 
 ---
@@ -103,9 +109,8 @@ We'd love to hear your feedback! Use the "Request a Card" feature in the Library
 ## Support & Marketing URLs
 
 **Support URL:** https://studiodemby.com/contrapose/support
-(Or: https://github.com/yourusername/contrapose if you prefer)
 
-**Marketing URL (optional):** https://studiodemby.com/contrapose
+**Marketing URL (optional):** 
 
 **Privacy Policy URL:** https://studiodemby.com/contrapose/privacy
 (You'll need to host PRIVACY.md here)
@@ -130,10 +135,12 @@ No account or subscription required. All features are immediately available.
 ## Screenshots Needed
 
 ### iPhone (Required sizes)
+
 - 6.7" (iPhone 15 Pro Max): 1290 x 2796
 - 6.5" (iPhone 14 Plus): 1284 x 2778
 
 **Suggested screenshots (5-10 images):**
+
 1. Practice mode - "Draw Prompt" button with subtitle
 2. Practice card drawn (e.g., "Unclench protocol")
 3. Improvisation mode with mood banner + card
@@ -141,9 +148,11 @@ No account or subscription required. All features are immediately available.
 5. Card detail view (optional)
 
 ### iPad (Required if supporting iPad)
+
 - 12.9" (iPad Pro): 2048 x 2732
 
 ### Android (Play Store)
+
 - Phone: Minimum 2 screenshots (1080 x 1920 recommended)
 - Tablet: Recommended if supporting tablets
 
@@ -154,12 +163,14 @@ No account or subscription required. All features are immediately available.
 ## Tips for Screenshots
 
 ### Do:
+
 - Use real device screenshots (not simulator if possible)
 - Show the app in action (cards drawn, not empty states)
 - Include variety (both modes, library view)
 - Keep it clean (no debug info, full battery, good time)
 
 ### Don't:
+
 - Don't add marketing text over screenshots (keep it native)
 - Don't include device frames (stores add these automatically)
 - Don't use landscape orientation (app is portrait-only)

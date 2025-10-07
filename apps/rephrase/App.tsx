@@ -46,7 +46,7 @@ export default function App() {
               name="Practice"
               component={PracticeScreen}
               options={{
-                title: '♪ Rephrase',
+                title: '♪ Contrapose',
                 tabBarLabel: 'Practice',
                 tabBarIcon: ({ color, size }) => (
                   <Ionicons name="play-circle" size={size} color={color} />
@@ -57,7 +57,7 @@ export default function App() {
               name="Library"
               component={LibraryScreen}
               options={{
-                title: '♪ Rephrase',
+                title: '♪ Contrapose',
                 tabBarLabel: 'Library',
                 tabBarIcon: ({ color, size }) => <Ionicons name="book" size={size} color={color} />,
               }}
