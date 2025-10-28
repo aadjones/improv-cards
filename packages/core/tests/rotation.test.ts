@@ -5,12 +5,12 @@ import { Deck, DrawEvent } from '../src/types';
 const testDeck: Deck = {
   suits: ['tone', 'rhythm', 'phrasing'],
   cards: [
-    { id: 'tone-1', suit: 'tone', title: 'Tone Card 1' },
-    { id: 'tone-2', suit: 'tone', title: 'Tone Card 2' },
-    { id: 'rhythm-1', suit: 'rhythm', title: 'Rhythm Card 1' },
-    { id: 'rhythm-2', suit: 'rhythm', title: 'Rhythm Card 2' },
-    { id: 'phrasing-1', suit: 'phrasing', title: 'Phrasing Card 1' },
-    { id: 'phrasing-2', suit: 'phrasing', title: 'Phrasing Card 2' },
+    { id: 'tone-1', suit: 'tone', title: 'Tone Card 1', type: 'practice' },
+    { id: 'tone-2', suit: 'tone', title: 'Tone Card 2', type: 'practice' },
+    { id: 'rhythm-1', suit: 'rhythm', title: 'Rhythm Card 1', type: 'improv' },
+    { id: 'rhythm-2', suit: 'rhythm', title: 'Rhythm Card 2', type: 'improv' },
+    { id: 'phrasing-1', suit: 'phrasing', title: 'Phrasing Card 1', type: 'improv' },
+    { id: 'phrasing-2', suit: 'phrasing', title: 'Phrasing Card 2', type: 'improv' },
   ],
 };
 

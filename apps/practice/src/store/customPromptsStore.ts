@@ -6,8 +6,8 @@ const CUSTOM_SUIT = 'custom';
 
 export interface CustomPromptsStore {
   getCustomPrompts(): Promise<CustomPrompt[]>;
-  addCustomPrompt(title: string, body?: string): Promise<CustomPrompt>;
-  updateCustomPrompt(id: string, title: string, body?: string): Promise<CustomPrompt>;
+  addCustomPrompt(title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt>;
+  updateCustomPrompt(id: string, title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt>;
   deleteCustomPrompt(id: string): Promise<void>;
   getCustomCards(): Promise<Card[]>;
   clear(): Promise<void>;
@@ -17,14 +17,14 @@ function generateId(): string {
   return `custom-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
-function validatePrompt(title: string, body?: string): void {
+function validatePrompt(title: string, description?: string): void {
   if (!title || title.trim().length === 0) {
     throw new Error('Title is required');
   }
   if (title.trim().length > 100) {
     throw new Error('Title must be 100 characters or less');
   }
-  if (body && body.length > 500) {
+  if (description && description.length > 500) {
     throw new Error('Description must be 500 characters or less');
   }
 }
@@ -40,14 +40,15 @@ export const customPromptsStore: CustomPromptsStore = {
     }
   },
 
-  async addCustomPrompt(title: string, body?: string): Promise<CustomPrompt> {
-    validatePrompt(title, body);
+  async addCustomPrompt(title: string, description?: string, type: 'practice' | 'improv' = 'practice'): Promise<CustomPrompt> {
+    validatePrompt(title, description);
 
     const now = Date.now();
     const prompt: CustomPrompt = {
       id: generateId(),
       title: title.trim(),
-      body: body?.trim() || undefined,
+      description: description?.trim() || undefined,
+      type,
       createdAt: now,
       updatedAt: now,
     };
@@ -59,8 +60,8 @@ export const customPromptsStore: CustomPromptsStore = {
     return prompt;
   },
 
-  async updateCustomPrompt(id: string, title: string, body?: string): Promise<CustomPrompt> {
-    validatePrompt(title, body);
+  async updateCustomPrompt(id: string, title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt> {
+    validatePrompt(title, description);
 
     const prompts = await this.getCustomPrompts();
     const promptIndex = prompts.findIndex(p => p.id === id);
@@ -72,7 +73,8 @@ export const customPromptsStore: CustomPromptsStore = {
     const updatedPrompt: CustomPrompt = {
       ...prompts[promptIndex],
       title: title.trim(),
-      body: body?.trim() || undefined,
+      description: description?.trim() || undefined,
+      type: type || prompts[promptIndex].type,
       updatedAt: Date.now(),
     };
 
@@ -99,7 +101,8 @@ export const customPromptsStore: CustomPromptsStore = {
       id: prompt.id,
       suit: CUSTOM_SUIT,
       title: prompt.title,
-      body: prompt.body,
+      description: prompt.description,
+      type: prompt.type,
       isCustom: true,
     }));
   },

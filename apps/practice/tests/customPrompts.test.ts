@@ -27,7 +27,7 @@ describe('Custom Prompts Integration', () => {
       );
 
       expect(prompt.title).toBe('Focus on breathing');
-      expect(prompt.body).toBe('Synchronize your breathing with the musical phrases');
+      expect(prompt.description).toBe('Synchronize your breathing with the musical phrases');
       expect(prompt.id).toMatch(/^custom-/);
       expect(mockAsyncStorage.setItem).toHaveBeenCalled();
     });
@@ -48,7 +48,8 @@ describe('Custom Prompts Integration', () => {
         {
           id: 'custom-001',
           title: 'Test Prompt',
-          body: 'Test description',
+          description: 'Test description',
+          type: 'practice' as const,
           createdAt: Date.now(),
           updatedAt: Date.now(),
         },
@@ -63,7 +64,8 @@ describe('Custom Prompts Integration', () => {
         id: 'custom-001',
         suit: 'custom',
         title: 'Test Prompt',
-        body: 'Test description',
+        description: 'Test description',
+        type: 'practice',
         isCustom: true,
       });
     });
