@@ -32,7 +32,7 @@
       "package": "com.studiodemby.rephrase"
     },
     "web": {
-      "favicon": "./assets/favicon.ico"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
