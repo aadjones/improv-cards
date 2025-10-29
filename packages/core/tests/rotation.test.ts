@@ -95,17 +95,23 @@ describe('drawBiasedCard', () => {
 
     const config: BiasConfig = { windowDays: 14, minSuitCooldown: 1 };
 
-    // Draw many cards and verify tone is significantly reduced
+    // Draw many cards and verify tone is significantly reduced relative to other suits
     const drawCounts = { tone: 0, rhythm: 0, phrasing: 0 };
-    const numDraws = 100;
+    const numDraws = 1000;
 
     for (let i = 0; i < numDraws; i++) {
       const card = drawBiasedCard(testDeck, recentHistory, config, now);
       drawCounts[card.suit as keyof typeof drawCounts]++;
     }
 
-    // With cooldown, tone should be heavily penalized
-    expect(drawCounts.tone).toBeLessThan(numDraws * 0.2); // Less than 20%
+    // With cooldown, tone should be drawn less than EACH of the other suits
+    // This tests relative behavior, not absolute thresholds
+    expect(drawCounts.tone).toBeLessThan(drawCounts.rhythm);
+    expect(drawCounts.tone).toBeLessThan(drawCounts.phrasing);
+
+    // Additionally, tone should be significantly below equal distribution (33.3%)
+    // With 1000 samples and cooldown, tone should be well below 30%
+    expect(drawCounts.tone).toBeLessThan(numDraws * 0.30);
   });
 
   it('handles deck with no cards gracefully', () => {

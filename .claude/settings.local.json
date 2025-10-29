@@ -45,7 +45,11 @@
       "Bash(curl:*)",
       "Bash(cat:*)",
       "Bash(lsof:*)",
-      "Bash(sips:*)"
+      "Bash(sips:*)",
+      "Bash(for i in {1..10})",
+      "Bash(do npm test -- --testNamePattern=\"applies cooldown\" --silent)",
+      "Bash(exit 1)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []
