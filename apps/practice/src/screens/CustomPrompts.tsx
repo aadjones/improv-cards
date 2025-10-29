@@ -157,7 +157,7 @@ export default function CustomPrompts() {
             try {
               await customPromptsStore.deleteCustomPrompt(prompt.id);
               await loadPrompts();
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to delete prompt');
             }
           },

@@ -6,8 +6,17 @@ const CUSTOM_SUIT = 'custom';
 
 export interface CustomPromptsStore {
   getCustomPrompts(): Promise<CustomPrompt[]>;
-  addCustomPrompt(title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt>;
-  updateCustomPrompt(id: string, title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt>;
+  addCustomPrompt(
+    title: string,
+    description?: string,
+    type?: 'practice' | 'improv'
+  ): Promise<CustomPrompt>;
+  updateCustomPrompt(
+    id: string,
+    title: string,
+    description?: string,
+    type?: 'practice' | 'improv'
+  ): Promise<CustomPrompt>;
   deleteCustomPrompt(id: string): Promise<void>;
   getCustomCards(): Promise<Card[]>;
   clear(): Promise<void>;
@@ -40,7 +49,11 @@ export const customPromptsStore: CustomPromptsStore = {
     }
   },
 
-  async addCustomPrompt(title: string, description?: string, type: 'practice' | 'improv' = 'practice'): Promise<CustomPrompt> {
+  async addCustomPrompt(
+    title: string,
+    description?: string,
+    type: 'practice' | 'improv' = 'practice'
+  ): Promise<CustomPrompt> {
     validatePrompt(title, description);
 
     const now = Date.now();
@@ -60,7 +73,12 @@ export const customPromptsStore: CustomPromptsStore = {
     return prompt;
   },
 
-  async updateCustomPrompt(id: string, title: string, description?: string, type?: 'practice' | 'improv'): Promise<CustomPrompt> {
+  async updateCustomPrompt(
+    id: string,
+    title: string,
+    description?: string,
+    type?: 'practice' | 'improv'
+  ): Promise<CustomPrompt> {
     validatePrompt(title, description);
 
     const prompts = await this.getCustomPrompts();
